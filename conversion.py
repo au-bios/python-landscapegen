@@ -1,4 +1,4 @@
-# -*- coding: cp1252 -*-
+﻿# -*- coding: cp1252 -*-
 # Name: Konvertering vs. 3
 # Formål: Dette script skal konvertere de nødvendige vektorlag til rasterlag
 # Flemming Skov - februar - 2013
@@ -8,6 +8,9 @@
 
 #TESTTESTTEST
 #OGENDNUEN
+#DENNE LINJE TILFØJET FRA DESKTOP FOLDER ....
+
+
 
 # IMPORT SYSTEM MODULES
 import arcpy, traceback, sys, time
