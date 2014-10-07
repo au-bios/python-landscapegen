@@ -31,6 +31,8 @@ arcpy.env.mask = localSettings
 arcpy.env.cellSize = localSettings
 print "... geoprocessing settings indlæst"
 
+print "This is a merge changes test"
+
 
 # VIGTIGT - styrer hvilke lag, der bliver konverteret; '1' køres scriptet; '0' gør det ikke
 default = 1
