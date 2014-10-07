@@ -6,6 +6,8 @@
 
 # Ændringer: Stier ændret; også nyt marklag - hvor Bedrifts-ID'en er ændret, så tallene ikke overstiger 10 digits ..
 
+#TESTTESTTEST
+
 # IMPORT SYSTEM MODULES
 import arcpy, traceback, sys, time
 from arcpy import env
