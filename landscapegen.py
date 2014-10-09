@@ -1,8 +1,8 @@
 # -*- coding: cp1252 -*-
 # Name: twoInOne vs 1
-# Formål: This script combines conversion and mosaic
+# Purpose: This script combines conversion and mosaic
 # Flemming Skov - Oct2014
-# Sidst opdateret: October 9, 2014
+# Last updated: October 9, 2014
 
 # IMPORT SYSTEM MODULES
 import arcpy, traceback, sys, time
@@ -13,15 +13,15 @@ nowTime = time.strftime('%X %x')
 print "Landscape conversion started: " + nowTime
 print "... system modules found and read"
 
-# DATA - HER SÆTTES LINKS TIL DIVERSE GEODATABASER OG FOLDERS
-outPatch = "E:/Landskabsgenerering/landskaber/Vejlerne/vejlerne.gdb/"                     # Her gemmes de færdige rasterkort
-localSettings = "E:/Landskabsgenerering/landskaber/Vejlerne/project.gdb/vejlerne_mask"    # Projektfolder med mask
-gisDB = "E:/LandskabsGenerering/gis/dkgis.gdb"                                            # Her findes feature gis lagene
-gis2DB = "E:/Landskabsgenerering/landskaber/Vejlerne/vejlerne.gdb"                        # Her læses filerne fra i mosaikprocessen
+# DATA - paths to data and output
+outPatch = "E:/Landskabsgenerering/landskaber/Vejlerne/vejlerne.gdb/"                     # Saves maps here
+localSettings = "E:/Landskabsgenerering/landskaber/Vejlerne/project.gdb/vejlerne_mask"    # Project folder with mask
+gisDB = "E:/LandskabsGenerering/gis/dkgis.gdb"                                            # Input features
+gis2DB = "E:/Landskabsgenerering/landskaber/Vejlerne/vejlerne.gdb"                        # Input (results from conversion) to mosaic process
 asciisti = "E:/Landskabsgenerering/landskaber/Vejlerne/ASCII_Input.txt"                   
-scratchDB = "E:/LandskabsGenerering/landskaber/Vejlerne/scratch"                          # Folder til temporære raster
+scratchDB = "E:/LandskabsGenerering/landskaber/Vejlerne/scratch"                          # For temp files
 
-# VIGTIGT-VIGTIGT-VIGTIGT:  Husk at ændre reference til det konkrete marklag i lagene 505 og 1000!!!
+# IMPORTANT:  remember to change reference to the correct field polygon layer
 
 arcpy.env.overwriteOutput = True
 arcpy.env.workspace = gisDB
@@ -30,7 +30,6 @@ arcpy.env.extent = localSettings
 arcpy.env.mask = localSettings
 arcpy.env.cellSize = localSettings
 print "... geoprocessing settings read"
-
 
 # IMPORTANT - controls which processes are executed
 default = 1
@@ -44,73 +43,67 @@ ferskvand_c = default
 kultur_c = default
 mosaik_c = default
 
-
-#CONVERSION
+#CONVERSION  - features to raster layers
 landhav_c = default   #land_hav  - det faste land - og havet 
-
-skrt105_c = default  #skraent - skrænter langs veje
-vejk110_c = default  #vejkant
-stie112_c = default  #stier - stier (inkl. cykelstier og grusstier af enhver art)
-park114_c = default  #parkering - parkeringspladser
-spor115_c = default  #vejmidt_brudt - spor (grusveje og spor)
-jern120_c = default  #jernbane_brudt - jernbaner
-vu30122_c = default  #vejmidt_brudt - små veje (under 3 meter)
-vu60125_c = default  #vejmidt_brudt - mellemstore veje (3-6 meter)
-vu90130_c = default  #vejmidt_brudt - store veje (over 6 meter)
-# OBS: de følgende to lag tilknyttes foreløbig vejlaget for at sikre, at de ender øverst i mosaikken
-hjsp150_c = default  #højspændingsmaster
-vind155_c = default  #vindøller
-
+skrt105_c = default   #skraent - skrÃ¦nter langs veje
+vejk110_c = default   #vejkant
+stie112_c = default   #stier - stier (inkl. cykelstier og grusstier af enhver art)
+park114_c = default   #parkering - parkeringspladser
+spor115_c = default   #vejmidt_brudt - spor (grusveje og spor)
+jern120_c = default   #jernbane_brudt - jernbaner
+vu30122_c = default   #vejmidt_brudt - smÃ¥ veje (under 3 meter)
+vu60125_c = default   #vejmidt_brudt - mellemstore veje (3-6 meter)
+vu90130_c = default   #vejmidt_brudt - store veje (over 6 meter)
+                      #OBS: de fÃ¸lgende to lag tilknyttes forelÃ¸big vejlaget for at sikre, at de ender Ã¸verst i mosaikken
+hjsp150_c = default   #hÃ¸jspÃ¦ndingsmaster
+vind155_c = default   #vindÃ¸ller
 lavb205_c = default   #lavbebyg - lav bebyggelse
-hojb210_c = default   #hojbebyg - høj bebyggelse
+hojb210_c = default   #hojbebyg - hÃ¸j bebyggelse
 byke215_c = default   #bykerne
-indu220_c = default   #industri - industriområder
+indu220_c = default   #industri - industriomrÃ¥der
 kirk225_c = default   #kirkegrd - kirkegaarde
-sprt230_c = default   #sportanlaeg - sportsanlæg
+sprt230_c = default   #sportanlaeg - sportsanlÃ¦g
 bygn250_c = default   #bygning
-
 skov310_c = default   #top10dk skov (alle typer)
 krat315_c = default   #top10dk krat_bevoksning
-sand320_c = default   #top10dk sand - især langs kyster
-hede325_c = default   #top10dk hede - 'hede' dækker også klitter og overdrev
-vaad330_c = default   #top10dk vaadområde - moser, enge, mv.
-
+sand320_c = default   #top10dk sand - isÃ¦r langs kyster
+hede325_c = default   #top10dk hede - 'hede' dÃ¦kker ogsÃ¥ klitter og overdrev
+vaad330_c = default   #top10dk vaadomrÃ¥de - moser, enge, mv.
 eng_355_c = default   #paragraf 3 eng
 hede360_c = default   #paragraf 3 hede
 mose365_c = default   #paragraf 3 mose
 over370_c = default   #paragraf 3 overdrev
 seng375_c = default   #paragraf 3 strandeng
-soe_380_c = default   #paragraf 3 sø
-
-soer440_c = default   #soer - søer
-aaer435_c = default   #vandloeb_brudt - små vandløb (< 2.5 meter)
-aaer436_c = default   #vandloeb_brudt - mellemstore vandløb (2.5 - 12 meter)
-aaer437_c = default   #vandloeb_brudt - store vandløb (> 12 meter)
-sorn420_c = default   #soer - randzone om søer
-
-#NB: disse tre randzoner beregnes automatisk - de er nævnt her for at holde styr på koderne
-#aarn425        #vandloeb_brudt - randzone om små vandløb
-#aarn426        #vandloeb_brudt - randzone om mellemstore vandløb
-#aarn427        #vandloeb_brudt - randzone om store vandløb
-
+soe_380_c = default   #paragraf 3 sÃ¸
+soer440_c = default   #soer - sÃ¸er
+aaer435_c = default   #vandloeb_brudt - smÃ¥ vandlÃ¸b (< 2.5 meter)
+aaer436_c = default   #vandloeb_brudt - mellemstore vandlÃ¸b (2.5 - 12 meter)
+aaer437_c = default   #vandloeb_brudt - store vandlÃ¸b (> 12 meter)
+sorn420_c = default   #soer - randzone om sÃ¸er
 mark505_c = default   #markrandzoner
 mark1000_c = default  #marker
-
 dige620_c = default   #diger
 fred625_c = default   #fred_fortid  - fredede fortidsminder
-rekr630_c = default   #rekromr - rekreative områder - vel i reglen græs
+rekr630_c = default   #rekromr - rekreative omrÃ¥der - vel i reglen grÃ¦s
 hegn635_c = default   #levende hegn
-trae640_c = default   #trægrupper
-trae641_c = default   #enkeltstående træ
+trae640_c = default   #trÃ¦grupper
+trae641_c = default   #enkeltstÃ¥ende trÃ¦
 raas650_c = default   #raastof - raastofudvinding
-
 ais1100_c = default   #ais arealanvendelse 100 kort
+
+#NB: disse tre randzoner beregnes automatisk - de er nÃ¦vnt her for at holde styr pÃ¥ koderne
+#aarn425        #vandloeb_brudt - randzone om smÃ¥ vandlÃ¸b
+#aarn426        #vandloeb_brudt - randzone om mellemstore vandlÃ¸b
+#aarn427        #vandloeb_brudt - randzone om store vandlÃ¸b
 
 print " "
 
 #####################################################################################################
 
 try:
+
+# CONVERSION
+#*******************************************************
 
 # 1 - land og hav (landhav)
   if landhav_c == 1:
@@ -120,9 +113,9 @@ try:
       print "... sletter eksisterende raster"
     arcpy.PolygonToRaster_conversion("land_hav", "Land", outPatch + "landhav", "CELL_CENTER", "NONE", "1")
 
-# 105 - Skrænter til raster (skrt105)
+# 105 - SkrÃ¦nter til raster (skrt105)
   if skrt105_c == 1:
-    print "Processerer kunstige skrænter ved vejanlæg ..."
+    print "Processerer kunstige skrÃ¦nter ved vejanlÃ¦g ..."
     if arcpy.Exists(outPatch + "skrt105"):
       arcpy.Delete_management(outPatch + "skrt105")
       print "... sletter eksisterende raster"
@@ -152,7 +145,7 @@ try:
     
 # 114 - Parkeringsarealer til raster (park114)
   if park114_c == 1:
-    print "Processerer parkeringsområder ..."
+    print "Processerer parkeringsomrÃ¥der ..."
     if arcpy.Exists(outPatch + "park114"):
       arcpy.Delete_management(outPatch + "park114")
       print "... sletter eksisterende raster"
@@ -180,9 +173,9 @@ try:
     jern120 = Con(eucDistTmp < 4.5, 120, 1)
     jern120.save(outPatch + "jern120")
 
- # 122 - Små veje til raster (vu30122)
+ # 122 - SmÃ¥ veje til raster (vu30122)
   if vu30122_c == 1:
-    print "Processerer små veje  ..."
+    print "Processerer smÃ¥ veje  ..."
     if arcpy.Exists(outPatch + "vu30122"):
       arcpy.Delete_management(outPatch + "vu30122")
       print "... sletter eksisterende raster"
@@ -210,11 +203,11 @@ try:
     vu90130 = Con(eucDistTmp < 5.0, 130, 1)
     vu90130.save(outPatch + "vu90130")
 
-##### OBS: Højspændingsmaster og vindmøller sat ind i vejlaget; da de skal øverst i mosaikken
+##### OBS: HÃ¸jspÃ¦ndingsmaster og vindmÃ¸ller sat ind i vejlaget; da de skal Ã¸verst i mosaikken
 
-# 150 - Højspændingsmaster
+# 150 - HÃ¸jspÃ¦ndingsmaster
   if hjsp150_c == 1:
-    print "Processerer højspændingsmaster ..."
+    print "Processerer hÃ¸jspÃ¦ndingsmaster ..."
     if arcpy.Exists(outPatch + "hjsp150"):
       arcpy.Delete_management(outPatch + "hjsp150")
       print "... sletter eksisterende raster"
@@ -222,9 +215,9 @@ try:
     hjsp150 = Con(eucDistTmp < 1.5, 150, 1)
     hjsp150.save(outPatch + "hjsp150")
 
-# 155 - Højspændingsmaster
+# 155 - HÃ¸jspÃ¦ndingsmaster
   if vind155_c == 1:
-    print "Processerer vindmøller ..."
+    print "Processerer vindmÃ¸ller ..."
     if arcpy.Exists(outPatch + "vind155"):
       arcpy.Delete_management(outPatch + "vind155")
       print "... sletter eksisterende raster"
@@ -245,9 +238,9 @@ try:
     lavb205.save(outPatch + "lavb205")
     arcpy.Delete_management(outPatch + "tmpRaster")
 
-# 210 - Høj bebyggelse
+# 210 - HÃ¸j bebyggelse
   if hojb210_c == 1:
-    print "Processerer høj bebyggelse ..."
+    print "Processerer hÃ¸j bebyggelse ..."
     if arcpy.Exists(outPatch + "hojb210"):
       arcpy.Delete_management(outPatch + "hojb210")
       print "... sletter eksisterende raster"
@@ -271,7 +264,7 @@ try:
 
 # 220 - Industri
   if indu220_c == 1:
-    print "Processerer industriområder ..."
+    print "Processerer industriomrÃ¥der ..."
     if arcpy.Exists(outPatch + "indu220"):
       arcpy.Delete_management(outPatch + "indu220")
       print "... sletter eksisterende raster"
@@ -281,9 +274,9 @@ try:
     indu220.save(outPatch + "indu220")
     arcpy.Delete_management(outPatch + "tmpRaster")
 
-# 225 - Kirkegårde
+# 225 - KirkegÃ¥rde
   if kirk225_c == 1:
-    print "Processerer kirkegårde ..."
+    print "Processerer kirkegÃ¥rde ..."
     if arcpy.Exists(outPatch + "kirk225"):
       arcpy.Delete_management(outPatch + "kirk225")
       print "... sletter eksisterende raster"
@@ -293,9 +286,9 @@ try:
     kirk225.save(outPatch + "kirk225")
     arcpy.Delete_management(outPatch + "tmpRaster")
 
-# 230 - Sportsanlæg
+# 230 - SportsanlÃ¦g
   if sprt230_c == 1:
-    print "Processerer sportsanlæg ..."
+    print "Processerer sportsanlÃ¦g ..."
     if arcpy.Exists(outPatch + "sprt230"):
       arcpy.Delete_management(outPatch + "sprt230")
       print "... sletter eksisterende raster"
@@ -353,7 +346,7 @@ try:
     sand320.save(outPatch + "sand320")
     arcpy.Delete_management(outPatch + "tmpRaster")
 
-# 325 - hede (OBS: dækker både hede og overdrev og til dels klit) (hede325)
+# 325 - hede (OBS: dÃ¦kker bÃ¥de hede og overdrev og til dels klit) (hede325)
   if hede325_c == 1:
     print "Processerer hedevegetation ..."
     if arcpy.Exists(outPatch + "hede325"):
@@ -447,9 +440,9 @@ try:
     seng375 = Con(eucDisttmp < 3, 375, 1)
     seng375.save(outPatch + "seng375")
 
-# 380 - p3 sø 3080 (soe_380)
+# 380 - p3 sÃ¸ 3080 (soe_380)
   if soe_380_c == 1:
-    print "Processerer paragraf3-sø ..."
+    print "Processerer paragraf3-sÃ¸ ..."
     if arcpy.Exists(outPatch + "soe_380"):
       arcpy.Delete_management(outPatch + "soe_380")
       print "... sletter eksisterende raster"
@@ -461,9 +454,9 @@ try:
     soe_380 = Con(eucDisttmp < 1, 380, 1)
     soe_380.save(outPatch + "soe_380")
 
-# 440 - Ferskvandssøer
+# 440 - FerskvandssÃ¸er
   if soer440_c == 1:
-    print "Processerer søer ..."
+    print "Processerer sÃ¸er ..."
     if arcpy.Exists(outPatch + "soer440"):
       arcpy.Delete_management(outPatch + "soer440")
       print "... sletter eksisterende raster"
@@ -473,9 +466,9 @@ try:
     soer440.save(outPatch + "soer440")
     # arcpy.Delete_management(outPatch + "tmpRaster")
 
-# 425/435 - Små vandløb (2.5-12) (vandloeb_brudt)+ buffer  OBS:  HUske at tilføje de 'ukendte'
+# 425/435 - SmÃ¥ vandlÃ¸b (2.5-12) (vandloeb_brudt)+ buffer  OBS:  HUske at tilfÃ¸je de 'ukendte'
   if aaer435_c == 1:
-    print "Processerer små vandløb (0 - 2.5 meter)"
+    print "Processerer smÃ¥ vandlÃ¸b (0 - 2.5 meter)"
     if arcpy.Exists(outPatch + "aaer435"):
       arcpy.Delete_management(outPatch + "aaer435")
       print "... sletter eksisterende raster"
@@ -493,9 +486,9 @@ try:
     aaer425 = Con(eucDistTmp < 2.01, 425, 1)
     aaer425.save(outPatch + "aaer425")
 
-# 426/436 - Mellemstore vandløb (2.5-12) (vandloeb_brudt)+ buffer
+# 426/436 - Mellemstore vandlÃ¸b (2.5-12) (vandloeb_brudt)+ buffer
   if aaer436_c == 1:
-    print "Processerer mellemstore vandløb (2.5 - 12 meter)"
+    print "Processerer mellemstore vandlÃ¸b (2.5 - 12 meter)"
     if arcpy.Exists(outPatch + "aaer436"):
       arcpy.Delete_management(outPatch + "aaer436")
       print "... sletter eksisterende raster"
@@ -512,9 +505,9 @@ try:
     aaer426 = Con(eucDistTmp < 7, 426, 1)
     aaer426.save(outPatch + "aaer426")
 
-# 427/437 - Store vandløb (> 12 meter) (vandloeb_brudt)+ buffer
+# 427/437 - Store vandlÃ¸b (> 12 meter) (vandloeb_brudt)+ buffer
   if aaer437_c == 1:
-    print "Processerer store vandløb (> 12 meter)"
+    print "Processerer store vandlÃ¸b (> 12 meter)"
     if arcpy.Exists(outPatch + "aaer437"):
       arcpy.Delete_management(outPatch + "aaer437")
       print "... sletter eksisterende raster"
@@ -531,9 +524,9 @@ try:
     aaer427 = Con(eucDistTmp < 7, 427, 1)
     aaer427.save(outPatch + "aaer427")
 
-# 420 - randzoner om søer (sat til 2 meter på hver side (soer410)
+# 420 - randzoner om sÃ¸er (sat til 2 meter pÃ¥ hver side (soer410)
   if sorn420_c == 1:
-    print "Processerer randzoner om søer ..."
+    print "Processerer randzoner om sÃ¸er ..."
     if arcpy.Exists(outPatch + "sorn420"):
       arcpy.Delete_management(outPatch + "sorn420")
       print "... sletter eksisterende raster"
@@ -541,7 +534,7 @@ try:
     sorn420 = Con(eucDistVejkant < 2.05, 420, 1)
     sorn420.save(outPatch + "sorn420") 
 
-# 505 - randzoner ved marker (sat til 1 meter på hver side (mark505)
+# 505 - randzoner ved marker (sat til 1 meter pÃ¥ hver side (mark505)
   if mark505_c == 1:
     print "Processerer markers randzoner ..."
     if arcpy.Exists(outPatch + "mark505"):
@@ -551,7 +544,7 @@ try:
     mark505 = Con(eucDistVejkant < 1.05, 505, 1)
     mark505.save(outPatch + "mark505")
 
-# mark1000 plus - konverterer markblokke således at hver markpolygon får sin unikke id
+# mark1000 plus - konverterer markblokke sÃ¥ledes at hver markpolygon fÃ¥r sin unikke id
   if mark1000_c == 1:
     print "Processerer markpolygoner ..."
     if arcpy.Exists(outPatch + "mark1000"):
@@ -585,9 +578,9 @@ try:
     fred625 = Con(eucDistTmp < 6, 625, 1)
     fred625.save(outPatch + "fred625")
 
-# 630 - Rekreative områder
+# 630 - Rekreative omrÃ¥der
   if rekr630_c == 1:
-    print "Processerer rekreative områder ..."
+    print "Processerer rekreative omrÃ¥der ..."
     if arcpy.Exists(outPatch + "rekr630"):
       arcpy.Delete_management(outPatch + "rekr630")
       print "... sletter eksisterende raster"
@@ -608,9 +601,9 @@ try:
     hegn635.save(outPatch + "hegn635")
 
 
-# 640 - konvertering af enkeltstående trægrupper (trae640)
+# 640 - konvertering af enkeltstÃ¥ende trÃ¦grupper (trae640)
   if trae640_c == 1:
-    print "Processerer grupper af enkeltstående træer ..."
+    print "Processerer grupper af enkeltstÃ¥ende trÃ¦er ..."
     if arcpy.Exists(outPatch + "trae640"):
       arcpy.Delete_management(outPatch + "trae640")
       print "... sletter eksisterende raster"
@@ -618,9 +611,9 @@ try:
     trae640 = Con(eucDistTmp < 8, 640, 1)
     trae640.save(outPatch + "trae640")
 
-# 641 - konvertering af enkeltstående træer (trae641)
+# 641 - konvertering af enkeltstÃ¥ende trÃ¦er (trae641)
   if trae641_c == 1:
-    print "Processerer enkeltstående træer ..."
+    print "Processerer enkeltstÃ¥ende trÃ¦er ..."
     if arcpy.Exists(outPatch + "trae641"):
       arcpy.Delete_management(outPatch + "trae641")
       print "... sletter eksisterende raster"
@@ -630,7 +623,7 @@ try:
 
 # 650- Raastofudvinding
   if raas650_c == 1:
-    print "Processerer områder med råstofudvinding ..."
+    print "Processerer omrÃ¥der med rÃ¥stofudvinding ..."
     if arcpy.Exists(outPatch + "raas650"):
       arcpy.Delete_management(outPatch + "raas650")
       print "... sletter eksisterende raster"
@@ -640,7 +633,7 @@ try:
     raas650.save(outPatch + "raas650")
     arcpy.Delete_management(outPatch + "tmpRaster")
 
-# 1100- AIS kortlægning til at udfylde baggrund
+# 1100- AIS kortlÃ¦gning til at udfylde baggrund
   if ais1100_c == 1:
     print "Processerer AIS arealanvendelseskort ..."
     if arcpy.Exists(outPatch + "ais1100"):
@@ -653,8 +646,11 @@ try:
     arcpy.Delete_management(outPatch + "tmpRaster")
 
 # MOSAIC
+#*******************************************************************
 
-  if vejnet_c == 1:   #Sammensætter et vejnettema med alle vejtyper og kanter
+  arcpy.env.workspace = gis2DB   #input for the mosaic process
+
+  if vejnet_c == 1:   #SammensÃ¦tter et vejnettema med alle vejtyper og kanter
     print "Processerer vejnet-tema ..."
     if arcpy.Exists(outPatch + "T1_vejnet"):
       arcpy.Delete_management(outPatch + "T1_vejnet")
@@ -663,11 +659,11 @@ try:
                    Raster ("jern120"), Raster ("vu30122"), Raster ("vu60125"), Raster ("vu90130"), Raster ("park114"), Raster("landhav")]
     vejnet = CellStatistics(vejRastList, "MAXIMUM", "DATA")    
     
-#  brug næste linje hvis vejnettet ønskes pre-shrinked - husk at ændre navn til vejnet0 ovenfor først 
+#  brug nÃ¦ste linje hvis vejnettet Ã¸nskes pre-shrinked - husk at Ã¦ndre navn til vejnet0 ovenfor fÃ¸rst 
 #    vejnet = Shrink(vejnet0, prelShrinking, 1)
     vejnet.save (outPatch + "T1_vejnet")
     
-  if bebyggelser_c == 1:   #Sammensætter et bebyggelsestema 
+  if bebyggelser_c == 1:   #SammensÃ¦tter et bebyggelsestema 
     print "Processerer bebyggelser ..."
     if arcpy.Exists(outPatch + "T2_bebyggelser"):
       arcpy.Delete_management(outPatch + "T2_bebyggelser")
@@ -676,8 +672,8 @@ try:
     bebyggelser = CellStatistics(bebyggelserRastList, "MAXIMUM", "DATA")
     bebyggelser.save (outPatch + "T2_bebyggelser")
 
-  if natur_c == 1:   #Sammensætter et naturtema 
-    print "Processerer naturområder ..."
+  if natur_c == 1:   #SammensÃ¦tter et naturtema 
+    print "Processerer naturomrÃ¥der ..."
     if arcpy.Exists(outPatch + "T3_natur"):
       arcpy.Delete_management(outPatch + "T3_natur")
       print "... sletter eksisterende raster"
@@ -686,8 +682,8 @@ try:
     natur = CellStatistics(naturRastList, "MAXIMUM", "DATA")
     natur.save (outPatch + "T3_natur")  
 
-  if vaadnatur_c == 1:   #Sammensætter et vådt naturtema 
-    print "Processerer naturområder ..."
+  if vaadnatur_c == 1:   #SammensÃ¦tter et vÃ¥dt naturtema 
+    print "Processerer naturomrÃ¥der ..."
     if arcpy.Exists(outPatch + "T3_vaadnatur"):
       arcpy.Delete_management(outPatch + "T3_vaadnatur")
       print "... sletter eksisterende raster"
@@ -695,8 +691,8 @@ try:
     vaadnatur = CellStatistics(vaadnaturRastList, "MAXIMUM", "DATA")
     vaadnatur.save (outPatch + "T3_vaadnatur")  
 
-  if ferskvand_c == 1:   #Sammensætter et vandtema 
-    print "Processerer vandløb og søer ..."
+  if ferskvand_c == 1:   #SammensÃ¦tter et vandtema 
+    print "Processerer vandlÃ¸b og sÃ¸er ..."
     if arcpy.Exists(outPatch + "T4_vand"):
       arcpy.Delete_management(outPatch + "T4_vand")
       print "... sletter eksisterende raster"
@@ -705,21 +701,21 @@ try:
     vand = CellStatistics(vandRastList, "MAXIMUM", "DATA")
     vand.save (outPatch + "T4_vand")
 
-  if kultur_c == 1:   # Sammensætter et kulturtema
-    print "Processerer hegn, træer og kulturspor ..."
+  if kultur_c == 1:   # SammensÃ¦tter et kulturtema
+    print "Processerer hegn, trÃ¦er og kulturspor ..."
     if arcpy.Exists(outPatch + "T5_kultur"):
       arcpy.Delete_management(outPatch + "T5_kultur")
       print "... sletter eksisterende raster"
       # "fred625" = fredede fortidsminder
     kulturRastList = [Raster ("dige620"), Raster ("fred625"), Raster ("rekr630"), Raster ("hegn635"), Raster ("trae640"), Raster ("trae641"),
                     Raster ("raas650"), Raster ("landhav")]
-      # Denne rækkefølge burde give mere mening.               
+      # Denne rÃ¦kkefÃ¸lge burde give mere mening.               
     kultur = CellStatistics(kulturRastList, "MAXIMUM", "DATA")
     kultur.save (outPatch + "T5_kultur")
 
-  gc.collect()  # Test af om dette kan afhjælpe huskommelsesproblemer.
+  gc.collect()  # Adresses memory problems??
 
-  if mosaik_c == 1:   # Sætter den endelige mosaik sammen af de fem temalag - her styres hvad der har prioritet over hvad
+  if mosaik_c == 1:   # SÃ¦tter den endelige mosaik sammen af de fem temalag - her styres hvad der har prioritet over hvad
     print "Processerer mosaik for alle temaer ..."
     if arcpy.Exists(outPatch + "Mosaik_rekl"):
       arcpy.Delete_management(outPatch + "Mosaik_rekl")
@@ -728,10 +724,10 @@ try:
     if arcpy.Exists(outPatch + "Mosaik_almass"):
       arcpy.Delete_management(outPatch + "Mosaik_almass")
       
-    print "... sletter eksisterende raster"
+    print "... deleting existing rasters"
 
- #  Dette script lægger de fem temaer sammen til en samlet mosaik. Sciptet styrer rækkefølgen
- #  og hvad, der fortrænger hvad
+ #  Dette script lÃ¦gger de fem temaer sammen til en samlet mosaik. Sciptet styrer rÃ¦kkefÃ¸lgen
+ #  og hvad, der fortrÃ¦nger hvad
  
     T1ve = Raster("T1_vejnet")
     T2be = Raster("T2_bebyggelser")
@@ -740,39 +736,38 @@ try:
     T4va = Raster("T4_vand")
     T5ku = Raster("T5_kultur")
     ais1100 = Raster("ais1100")  
-    mark1 = Raster("mark505")    # markrand
-    mark2 = Raster("mark1000")   # egentlige marker (eller markblokke)
+    mark1 = Raster("mark505")    # field boundary
+    mark2 = Raster("mark1000")   # fields
     landhav = Raster("landhav")
 
-    step1 = Con(mark2 > 999, mark2, 1)          # marklag lægges på først
+    step1 = Con(mark2 > 999, mark2, 1)          # marklag lÃ¦gges pÃ¥ fÃ¸rst
     print "marklag ..."
-    step2 = Con(T4va == 1, step1, T4va)            # lægger vand oven på
+    step2 = Con(T4va == 1, step1, T4va)            # lÃ¦gger vand oven pÃ¥
     print "vand ..."
-    step3 = Con(step2 == 1, T3na, step2)            # lægger natur på det som ikke er vand eller marklag
+    step3 = Con(step2 == 1, T3na, step2)            # lÃ¦gger natur pÃ¥ det som ikke er vand eller marklag
     print "natur ..."
-    step4 = Con(step3 == 1, T2be, step3)            # lægger bebyggelser på det som ikke er vand, marklag eller natur
+    step4 = Con(step3 == 1, T2be, step3)            # lÃ¦gger bebyggelser pÃ¥ det som ikke er vand, marklag eller natur
     print "bebyggelse ..."
-    step4a = Con(T3ana == 1, step4, T3ana)            # lægger vaad natur oven på alt andet
+    step4a = Con(T3ana == 1, step4, T3ana)            # lÃ¦gger vaad natur oven pÃ¥ alt andet
     print "vaad natur ..."
-    step5 = Con(T5ku == 1, step4a, T5ku)             # lægger kultur over alt andet
+    step5 = Con(T5ku == 1, step4a, T5ku)             # lÃ¦gger kultur over alt andet
     print "kultur ..."
-    step6 = Con(T1ve == 1, step5, T1ve)             # lægger veje over alt andet
+    step6 = Con(T1ve == 1, step5, T1ve)             # lÃ¦gger veje over alt andet
     print "veje ..."
-    mosaik01 = Con(landhav == 1, step6, 0)          # lægger hav på
+    mosaik01 = Con(landhav == 1, step6, 0)          # lÃ¦gger hav pÃ¥
     print "hav ..."
     
-    mosaik1 = Con(mosaik01 == 1, ais1100, mosaik01) # lægger ais-laget, hvor der ikke er andet
+    mosaik1 = Con(mosaik01 == 1, ais1100, mosaik01) # lÃ¦gger ais-laget, hvor der ikke er andet
     mosaik1.save (outPatch + "Mosaik_raa")
     nowTime = time.strftime('%X %x')
-    print "Rå mosaik færdig ..." + nowTime
+    print "RÃ¥ mosaik fÃ¦rdig ..." + nowTime
 
-# Reclassify to ALMaSS raster values
-# Her oversættes raster værdierne så de matcher med dem ALMaSS bruger
+# Reclassify to ALMaSS raster values# Her oversÃ¦ttes raster vÃ¦rdierne sÃ¥ de matcher med dem ALMaSS bruger
 
     mosaik2 = ReclassByASCIIFile(mosaik1, "E:/Landskabsgenerering/landskaber/Vejlerne/reclassification_31juli2014.txt", "DATA")
     mosaik2.save(outPatch + "Mosaik_rekl")
     nowTime = time.strftime('%X %x')
-    print "Reklassificering færdig ..." + nowTime
+    print "Reklassificering fÃ¦rdig ..." + nowTime
 
     regionALM = RegionGroup(mosaik2,"EIGHT","WITHIN","ADD_LINK","")
     if arcpy.Exists(outPatch + "Mosaik_almass"):
@@ -780,7 +775,7 @@ try:
         print " * Deleting existing Mosaik_almass  "
     regionALM.save(outPatch + "Mosaik_almass")
     nowTime = time.strftime('%X %x')
-    print "Regionalisering færdig ..." + nowTime
+    print "Regionalisering fÃ¦rdig ..." + nowTime
 
 # Write the ASCII file needed for ALMaSS:
 # Make sure to keep the file name - the program to make the lsb file will be looking for it.
