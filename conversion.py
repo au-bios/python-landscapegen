@@ -4,6 +4,10 @@
 # Flemming Skov - februar - 2013
 # Sidst opdateret: 18 maj 2014
 
+#RETTELSE FORSØGT LAGT IND FOR NY BRANCH KUN
+
+
+
 # Ændringer: Stier ændret; også nyt marklag - hvor Bedrifts-ID'en er ændret, så tallene ikke overstiger 10 digits ..
 
 # IMPORT SYSTEM MODULES
