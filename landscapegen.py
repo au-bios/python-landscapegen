@@ -758,7 +758,7 @@ try:
     print "buildings added to mosaic ..."
     mosaik01 = Con(landhav == 1, step7, 0)                # sea added
     print "sea added to mosaic ..."
-    mosaik1 = Con(mosaik01 == 1, ais1100, mosaik01) # laegger ais-laget, hvor der ikke er andet
+    mosaik1 = Con(mosaik01 == 1, ais1100, mosaik01) # Use the AIS layer if a cell was not filled by any of the layers above.
     mosaik1.save (outPatch + "Mosaik_raa")
     nowTime = time.strftime('%X %x')
     print "Raw mosaic assembled ..." + nowTime
