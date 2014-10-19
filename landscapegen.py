@@ -2,7 +2,7 @@
 # Name: twoInOne vs 1
 # Purpose: This script combines conversion and mosaic
 # Flemming Skov - Oct2014
-# Last updated: October 9, 2014
+# Last updated: October 19, 2014
 
 # IMPORT SYSTEM MODULES
 import arcpy, traceback, sys, time, gc
@@ -11,17 +11,17 @@ from arcpy.sa import *
 arcpy.CheckOutExtension("Spatial")
 nowTime = time.strftime('%X %x')
 gc.enable
-print "Landscape conversion started: " + nowTime
+print "Model landscape generator started: " + nowTime
 print "... system modules checked"
 
 # DATA - paths to data, output gdb, scratch folder and model landscape mask
-outPatch = "C:/pytest/kalo1.gdb/"                                                 # saves maps here
-localSettings = "C:/pytest/project.gdb/kalomask"                                  # project folder with mask
-gisDB = "C:/pytest/gis/dkgis.gdb"                                                 # input features
-scratchDB = "C:/pytest/scratch"                                                   # scratch folder for tempfiles
-asciiexp = "C:/pytest/ASCII_kalo.txt"                                             # export in ascii (for ALMaSS)                  
-reclasstable = "C:/pytest/reclass1.txt"                                           # reclass ascii table
-gis2DB = outPatch                                                                 # input to mosaic (results from conversion) to mosaic process
+outPatch = "C:/pytest/aa.gdb/"                                                 # saves maps here
+localSettings = "C:/pytest/project.gdb/aamask"                                 # project folder with mask
+gisDB = "C:/pytest/gis/dkgis.gdb"                                              # input features
+scratchDB = "C:/pytest/scratch"                                                # scratch folder for tempfiles
+asciiexp = "C:/pytest/ASCII_kalo.txt"                                          # export in ascii (for ALMaSS)
+reclasstable = "C:/pytest/reclass1.txt"                                        # reclass ascii table
+#gis2DB = outPatch                                                             # input to mosaic (results from conversion) to mosaic process
 
 # MODEL SETTINGS
 arcpy.env.overwriteOutput = True
@@ -47,7 +47,7 @@ kultur_c = default
 mosaik_c = default
 
 #CONVERSION  - features to raster layers
-landhav_c = default   #land_sea 
+landhav_c = default   #land_sea
 skrt105_c = default   #slopes along roads
 vejk110_c = default   #road verges
 stie112_c = default   #paths
@@ -121,9 +121,9 @@ try:
     if arcpy.Exists(outPatch + "skrt105"):
       arcpy.Delete_management(outPatch + "skrt105")
       print "... deletes existing raster"
-    eucDistVejkant = EucDistance("skraent","","1","")
-    skrt105 = Con(eucDistVejkant < 2.5, 105, 1)
-    skrt105.save(outPatch + "skrt105")
+    eucDistTemp = EucDistance("skraent","","1","")
+    rasTemp = Con(eucDistTemp < 2.5, 105, 1)
+    rasTemp.save(outPatch + "skrt105")
 
 # 110 - road verges (vejk110)
   if vejk110_c == 1:
@@ -131,29 +131,29 @@ try:
     if arcpy.Exists(outPatch + "vejk110"):
       arcpy.Delete_management(outPatch + "vejk110")
       print "... deletes existing raster"
-    eucDistVejkant = EucDistance("vejkant","","1","")
-    vejk110 = Con(eucDistVejkant < 1.75, 110, 1)
-    vejk110.save(outPatch + "vejk110")
+    eucDistTemp = EucDistance("vejkant","","1","")
+    rasTemp = Con(eucDistTemp < 1.75, 110, 1)
+    rasTemp.save(outPatch + "vejk110")
 
 # 112 - paths (stie112)
   if stie112_c == 1:
     print "Processing paths  ..."
-    if arcpy.Exists(outPatch + "stie120"):
+    if arcpy.Exists(outPatch + "stie112"):
       arcpy.Delete_management(outPatch + "stie112")
       print "... deletes existing raster"
-    eucDistTmp = EucDistance("veje_stier", "", "1", "")
-    stie112 = Con(eucDistTmp < 1.51, 112, 1)
-    stie112.save(outPatch + "stie112")
-    
+    eucDistTemp = EucDistance("veje_stier", "", "1", "")
+    rasTemp = Con(eucDistTemp < 1.51, 112, 1)
+    rasTemp.save(outPatch + "stie112")
+
 # 114 - parking areas (park114)
   if park114_c == 1:
     print "Processing parking areas ..."
     if arcpy.Exists(outPatch + "park114"):
       arcpy.Delete_management(outPatch + "park114")
       print "... deletes existing raster"
-    eucDistTmp = EucDistance("parkering", "", "1", "")
-    park114 = Con(eucDistTmp < 3.0, 114, 1)
-    park114.save(outPatch + "park114")
+    eucDistTemp = EucDistance("parkering", "", "1", "")
+    rasTemp = Con(eucDistTemp < 3.0, 114, 1)
+    rasTemp.save(outPatch + "park114")
 
 # 115 - dirt roads (spor115)
   if spor115_c == 1:
@@ -161,9 +161,9 @@ try:
     if arcpy.Exists(outPatch + "spor115"):
       arcpy.Delete_management(outPatch + "spor115")
       print "... deletes existing raster"
-    eucDistTmp = EucDistance("veje_spor", "", "1", "")
-    spor115 = Con(eucDistTmp < 2.25, 115, 1)
-    spor115.save(outPatch + "spor115")    
+    eucDistTemp = EucDistance("veje_spor", "", "1", "")
+    rasTemp = Con(eucDistTemp < 2.25, 115, 1)
+    rasTemp.save(outPatch + "spor115")
 
 # 120 - railway tracks (jern120)
   if jern120_c == 1:
@@ -171,9 +171,9 @@ try:
     if arcpy.Exists(outPatch + "jern120"):
       arcpy.Delete_management(outPatch + "jern120")
       print "... deletes existing raster"
-    eucDistTmp = EucDistance("jernbane_brudt", "", "1", "")
-    jern120 = Con(eucDistTmp < 4.5, 120, 1)
-    jern120.save(outPatch + "jern120")
+    eucDistTemp = EucDistance("jernbane_brudt", "", "1", "")
+    rasTemp = Con(eucDistTemp < 4.5, 120, 1)
+    rasTemp.save(outPatch + "jern120")
 
  # 122 - Small roads (vu30122)
   if vu30122_c == 1:
@@ -181,9 +181,9 @@ try:
     if arcpy.Exists(outPatch + "vu30122"):
       arcpy.Delete_management(outPatch + "vu30122")
       print "... deletes existing raster"
-    eucDistTmp = EucDistance("veje_vu30", "", "1", "")
-    vu30122 = Con(eucDistTmp < 1.75, 122, 1)
-    vu30122.save(outPatch + "vu30122")
+    eucDistTemp = EucDistance("veje_vu30", "", "1", "")
+    rasTemp = Con(eucDistTemp < 1.75, 122, 1)
+    rasTemp.save(outPatch + "vu30122")
 
  # 125 - Intermediate sized roads (vu60125)
   if vu60125_c == 1:
@@ -191,9 +191,9 @@ try:
     if arcpy.Exists(outPatch + "vu60125"):
       arcpy.Delete_management(outPatch + "vu60125")
       print "... deletes existing raster"
-    eucDistTmp = EucDistance("veje_vu60", "", "1", "")
-    vu60125 = Con(eucDistTmp < 3.0, 125, 1)
-    vu60125.save(outPatch + "vu60125")
+    eucDistTemp = EucDistance("veje_vu60", "", "1", "")
+    rasTemp = Con(eucDistTemp < 3.0, 125, 1)
+    rasTemp.save(outPatch + "vu60125")
 
  # 130 - Large roads (vu90130)
   if vu90130_c == 1:
@@ -201,9 +201,9 @@ try:
     if arcpy.Exists(outPatch + "vu90130"):
       arcpy.Delete_management(outPatch + "vu90130")
       print "... deletes existing raster"
-    eucDistTmp = EucDistance("veje_vu90", "", "1", "")
-    vu90130 = Con(eucDistTmp < 5.0, 130, 1)
-    vu90130.save(outPatch + "vu90130")
+    eucDistTemp = EucDistance("veje_vu90", "", "1", "")
+    rasTemp = Con(eucDistTemp < 5.0, 130, 1)
+    rasTemp.save(outPatch + "vu90130")
 
 # 150 - pylons (hjsp150)
   if hjsp150_c == 1:
@@ -211,9 +211,9 @@ try:
     if arcpy.Exists(outPatch + "hjsp150"):
       arcpy.Delete_management(outPatch + "hjsp150")
       print "... deletes existing raster"
-    eucDistTmp = EucDistance("hjspmast", "", "1", "")
-    hjsp150 = Con(eucDistTmp < 1.5, 150, 1)
-    hjsp150.save(outPatch + "hjsp150")
+    eucDistTemp = EucDistance("hjspmast", "", "1", "")
+    rasTemp = Con(eucDistTemp < 1.5, 150, 1)
+    rasTemp.save(outPatch + "hjsp150")
 
 # 155 - wind turbines (vind155)
   if vind155_c == 1:
@@ -221,9 +221,9 @@ try:
     if arcpy.Exists(outPatch + "vind155"):
       arcpy.Delete_management(outPatch + "vind155")
       print "... deletes existing raster"
-    eucDistTmp = EucDistance("vindmoel", "", "1", "")
-    vind155 = Con(eucDistTmp < 1.5, 155, 1)
-    vind155.save(outPatch + "vind155")     
+    eucDistTemp = EucDistance("vindmoel", "", "1", "")
+    rasTemp = Con(eucDistTemp < 1.5, 155, 1)
+    rasTemp.save(outPatch + "vind155")
 
 # 205 - built area - low (lavb205)
   if lavb205_c == 1:
@@ -233,8 +233,8 @@ try:
       print "... deletes existing raster"
     arcpy.PolygonToRaster_conversion("lavbebyg", "FEAT_KODE", outPatch + "tmpRaster", "CELL_CENTER", "NONE", "1")
     rasIsNull = IsNull(outPatch + "tmpRaster")
-    lavb205 = Con(rasIsNull == 1, 1, 205)
-    lavb205.save(outPatch + "lavb205")
+    rasTemp = Con(rasIsNull == 1, 1, 205)
+    rasTemp.save(outPatch + "lavb205")
     arcpy.Delete_management(outPatch + "tmpRaster")
 
 # 210 - built area - high (lavb210)
@@ -245,8 +245,8 @@ try:
       print "... deletes existing raster"
     arcpy.PolygonToRaster_conversion("hojbebyg", "FEAT_KODE", outPatch + "tmpRaster", "CELL_CENTER", "NONE", "1")
     rasIsNull = IsNull(outPatch + "tmpRaster")
-    hojb210 = Con(rasIsNull == 1, 1, 210)
-    hojb210.save(outPatch + "hojb210")
+    rasTemp = Con(rasIsNull == 1, 1, 210)
+    rasTemp.save(outPatch + "hojb210")
     arcpy.Delete_management(outPatch + "tmpRaster")
 
 # 215 - city center  - (byke205)
@@ -257,8 +257,8 @@ try:
       print "... deletes existing raster"
     arcpy.PolygonToRaster_conversion("bykerne", "FEAT_KODE", outPatch + "tmpRaster", "CELL_CENTER", "NONE", "1")
     rasIsNull = IsNull(outPatch + "tmpRaster")
-    byke215 = Con(rasIsNull == 1, 1, 215)
-    byke215.save(outPatch + "byke215")
+    rasTemp = Con(rasIsNull == 1, 1, 215)
+    rasTemp.save(outPatch + "byke215")
     arcpy.Delete_management(outPatch + "tmpRaster")
 
 # 220 - industry (indu220)
@@ -269,8 +269,8 @@ try:
       print "... deletes existing raster"
     arcpy.PolygonToRaster_conversion("industri", "FEAT_KODE", outPatch + "tmpRaster", "CELL_CENTER", "NONE", "1")
     rasIsNull = IsNull(outPatch + "tmpRaster")
-    indu220 = Con(rasIsNull == 1, 1, 220)
-    indu220.save(outPatch + "indu220")
+    rasTemp = Con(rasIsNull == 1, 1, 220)
+    rasTemp.save(outPatch + "indu220")
     arcpy.Delete_management(outPatch + "tmpRaster")
 
 # 225 - cemeteries (225)
@@ -281,8 +281,8 @@ try:
       print "... deletes existing raster"
     arcpy.PolygonToRaster_conversion("kirkegrd", "FEAT_KODE", outPatch + "tmpRaster", "CELL_CENTER", "NONE", "1")
     rasIsNull = IsNull(outPatch + "tmpRaster")
-    kirk225 = Con(rasIsNull == 1, 1, 225)
-    kirk225.save(outPatch + "kirk225")
+    rasTemp = Con(rasIsNull == 1, 1, 225)
+    rasTemp.save(outPatch + "kirk225")
     arcpy.Delete_management(outPatch + "tmpRaster")
 
 # 230 - sports fields (230)
@@ -293,8 +293,8 @@ try:
       print "... deletes existing raster"
     arcpy.PolygonToRaster_conversion("sportanlaeg", "FEAT_KODE", outPatch + "tmpRaster", "CELL_CENTER", "NONE", "1")
     rasIsNull = IsNull(outPatch + "tmpRaster")
-    sprt230 = Con(rasIsNull == 1, 1, 230)
-    sprt230.save(outPatch + "sprt230")
+    rasTemp = Con(rasIsNull == 1, 1, 230)
+    rasTemp.save(outPatch + "sprt230")
     arcpy.Delete_management(outPatch + "tmpRaster")
 
 # 250 - buildings (bygn250)
@@ -305,8 +305,8 @@ try:
       print "... deletes existing raster"
     arcpy.PolygonToRaster_conversion("bygning", "FEAT_KODE", outPatch + "tmpRaster", "CELL_CENTER", "NONE", "1")
     rasIsNull = IsNull(outPatch + "tmpRaster")
-    bygn250 = Con(rasIsNull == 1, 1, 250)
-    bygn250.save(outPatch + "bygn250")
+    rasTemp = Con(rasIsNull == 1, 1, 250)
+    rasTemp.save(outPatch + "bygn250")
     arcpy.Delete_management(outPatch + "tmpRaster")
 
 # 310 - forests (skov310)
@@ -317,8 +317,8 @@ try:
       print "... deletes existing raster"
     arcpy.PolygonToRaster_conversion("skov", "FEAT_KODE", outPatch + "tmpRaster", "CELL_CENTER", "NONE", "1")
     rasIsNull = IsNull(outPatch + "tmpRaster")
-    skov310 = Con(rasIsNull == 1, 1, 310)
-    skov310.save(outPatch + "skov310")
+    rasTemp = Con(rasIsNull == 1, 1, 310)
+    rasTemp.save(outPatch + "skov310")
     arcpy.Delete_management(outPatch + "tmpRaster")
 
 # 315 - shrubs  (krat315)
@@ -329,8 +329,8 @@ try:
       print "... deletes existing raster"
     arcpy.PolygonToRaster_conversion("krat_bevoksning", "FEAT_KODE", outPatch + "tmpRaster", "CELL_CENTER", "NONE", "1")
     rasIsNull = IsNull(outPatch + "tmpRaster")
-    krat315 = Con(rasIsNull == 1, 1, 315)
-    krat315.save(outPatch + "krat315")
+    rasTemp = Con(rasIsNull == 1, 1, 315)
+    rasTemp.save(outPatch + "krat315")
     arcpy.Delete_management(outPatch + "tmpRaster")
 
 # 320 - sand flat - mainly beaches (sand320)
@@ -341,8 +341,8 @@ try:
       print "... deletes existing raster"
     arcpy.PolygonToRaster_conversion("sand", "FEAT_KODE", outPatch + "tmpRaster", "CELL_CENTER", "NONE", "1")
     rasIsNull = IsNull(outPatch + "tmpRaster")
-    sand320 = Con(rasIsNull == 1, 1, 320)
-    sand320.save(outPatch + "sand320")
+    rasTemp = Con(rasIsNull == 1, 1, 320)
+    rasTemp.save(outPatch + "sand320")
     arcpy.Delete_management(outPatch + "tmpRaster")
 
 # 325 - heath land (hede325)
@@ -353,8 +353,8 @@ try:
       print "... deletes existing raster"
     arcpy.PolygonToRaster_conversion("hede", "FEAT_KODE", outPatch + "tmpRaster", "CELL_CENTER", "NONE", "1")
     rasIsNull = IsNull(outPatch + "tmpRaster")
-    hede325 = Con(rasIsNull == 1, 1, 325)
-    hede325.save(outPatch + "hede325")
+    rasTemp = Con(rasIsNull == 1, 1, 325)
+    rasTemp.save(outPatch + "hede325")
     arcpy.Delete_management(outPatch + "tmpRaster")
 
 # 330 - wetland (vaad330)
@@ -365,8 +365,8 @@ try:
       print "... deletes existing raster"
     arcpy.PolygonToRaster_conversion("vaadomraade", "FEAT_KODE", outPatch + "tmpRaster", "CELL_CENTER", "NONE", "1")
     rasIsNull = IsNull(outPatch + "tmpRaster")
-    vaad330 = Con(rasIsNull == 1, 1, 330)
-    vaad330.save(outPatch + "vaad330")
+    rasTemp = Con(rasIsNull == 1, 1, 330)
+    rasTemp.save(outPatch + "vaad330")
     arcpy.Delete_management(outPatch + "tmpRaster")
 
 # 355 - protected meadows (eng_355)
@@ -379,9 +379,9 @@ try:
     feat_layer = "eng_355"
     arcpy.MakeFeatureLayer_management(feat_class,feat_layer)
     arcpy.SelectLayerByAttribute_management(feat_layer, "NEW_SELECTION", '"OBJEKTKODE" = 3055')
-    eucDisttmp = EucDistance("eng_355","","1","")
-    eng_355 = Con(eucDisttmp < 3, 355, 1)
-    eng_355.save(outPatch + "eng_355")
+    eucDistTemp = EucDistance("eng_355","","1","")
+    rasTemp = Con(eucDistTemp < 3, 355, 1)
+    rasTemp.save(outPatch + "eng_355")
 
 # 360 - protected heath land (hede360)
   if hede360_c == 1:
@@ -393,9 +393,9 @@ try:
     feat_layer = "hede360"
     arcpy.MakeFeatureLayer_management(feat_class,feat_layer)
     arcpy.SelectLayerByAttribute_management(feat_layer, "NEW_SELECTION", '"OBJEKTKODE" = 3060')
-    eucDisttmp = EucDistance("hede360","","1","")
-    hede360 = Con(eucDisttmp < 3, 360, 1)
-    hede360.save(outPatch + "hede360")
+    eucDistTemp = EucDistance("hede360","","1","")
+    rasTemp = Con(eucDistTemp < 3, 360, 1)
+    rasTemp.save(outPatch + "hede360")
 
 # 365 - protected swamp 3065 (mose365)
   if mose365_c == 1:
@@ -407,9 +407,9 @@ try:
     feat_layer = "mose365"
     arcpy.MakeFeatureLayer_management(feat_class,feat_layer)
     arcpy.SelectLayerByAttribute_management(feat_layer, "NEW_SELECTION", '"OBJEKTKODE" = 3065')
-    eucDisttmp = EucDistance("mose365","","1","")
-    mose365 = Con(eucDisttmp < 3, 365, 1)
-    mose365.save(outPatch + "mose365")
+    eucDistTemp = EucDistance("mose365","","1","")
+    rasTemp = Con(eucDistTemp < 3, 365, 1)
+    rasTemp.save(outPatch + "mose365")
 
 # 370 - protected dry grassland 3070 (over370)
   if over370_c == 1:
@@ -421,9 +421,9 @@ try:
     feat_layer = "over370"
     arcpy.MakeFeatureLayer_management(feat_class,feat_layer)
     arcpy.SelectLayerByAttribute_management(feat_layer, "NEW_SELECTION", '"OBJEKTKODE" = 3070')
-    eucDisttmp = EucDistance("over370","","1","")
-    over370 = Con(eucDisttmp < 3, 370, 1)
-    over370.save(outPatch + "over370")
+    eucDistTemp = EucDistance("over370","","1","")
+    rasTemp = Con(eucDistTemp < 3, 370, 1)
+    rasTemp.save(outPatch + "over370")
 
 # 375 - protected marsh 3075 (seng375)
   if seng375_c == 1:
@@ -435,9 +435,9 @@ try:
     feat_layer = "seng375"
     arcpy.MakeFeatureLayer_management(feat_class,feat_layer)
     arcpy.SelectLayerByAttribute_management(feat_layer, "NEW_SELECTION", '"OBJEKTKODE" = 3075')
-    eucDisttmp = EucDistance("seng375","","1","")
-    seng375 = Con(eucDisttmp < 3, 375, 1)
-    seng375.save(outPatch + "seng375")
+    eucDistTemp = EucDistance("seng375","","1","")
+    rasTemp = Con(eucDistTemp < 3, 375, 1)
+    rasTemp.save(outPatch + "seng375")
 
 # 380 - protected lakes 3080 (soe_380)
   if soe_380_c == 1:
@@ -449,9 +449,9 @@ try:
     feat_layer = "soe_380"
     arcpy.MakeFeatureLayer_management(feat_class,feat_layer)
     arcpy.SelectLayerByAttribute_management(feat_layer, "NEW_SELECTION", '"OBJEKTKODE" = 3080')
-    eucDisttmp = EucDistance("soe_380","","1","")
-    soe_380 = Con(eucDisttmp < 1, 380, 1)
-    soe_380.save(outPatch + "soe_380")
+    eucDistTemp = EucDistance("soe_380","","1","")
+    rasTemp = Con(eucDistTemp < 1, 380, 1)
+    rasTemp.save(outPatch + "soe_380")
 
 # 440 - lakes (soer440)
   if soer440_c == 1:
@@ -461,8 +461,8 @@ try:
       print "... deletes existing raster"
     arcpy.PolygonToRaster_conversion("soer", "FEAT_KODE", outPatch + "tmpRaster", "CELL_CENTER", "NONE", "1")
     rasIsNull = IsNull(outPatch + "tmpRaster")
-    soer440 = Con(rasIsNull == 1, 1, 440)
-    soer440.save(outPatch + "soer440")
+    rasTemp = Con(rasIsNull == 1, 1, 440)
+    rasTemp.save(outPatch + "soer440")
     # arcpy.Delete_management(outPatch + "tmpRaster")
 
 # 425/435 - Small streams (2.5-12) (vandloeb_brudt)+ buffer  OBS:  remember to use 'ukendte'
@@ -479,11 +479,11 @@ try:
     arcpy.MakeFeatureLayer_management(feat_class,feat_layer)
     arcpy.SelectLayerByAttribute_management(feat_layer, "NEW_SELECTION", '"MIT_BREDDE" = \'0 - 2,5 m\'')
     arcpy.SelectLayerByAttribute_management(feat_layer, "ADD_TO_SELECTION", '"MIT_BREDDE" = \'Ukendt\'')
-    eucDistTmp = EucDistance("aaer415","","1","")
-    aaer435 = Con(eucDistTmp < 0.95, 435, 1)
-    aaer435.save(outPatch + "aaer435")
-    aaer425 = Con(eucDistTmp < 2.01, 425, 1)
-    aaer425.save(outPatch + "aaer425")
+    eucDistTemp = EucDistance("aaer415","","1","")
+    rasTemp = Con(eucDistTemp < 0.95, 435, 1)
+    rasTemp.save(outPatch + "aaer435")
+    rasTemp = Con(eucDistTemp < 2.01, 425, 1)
+    rasTemp.save(outPatch + "aaer425")
 
 # 426/436 - medium streams (2.5-12) (vandloeb_brudt)+ buffer
   if aaer436_c == 1:
@@ -498,11 +498,11 @@ try:
     feat_layer = "aaer416"
     arcpy.MakeFeatureLayer_management(feat_class,feat_layer)
     arcpy.SelectLayerByAttribute_management(feat_layer, "NEW_SELECTION", '"MIT_BREDDE" = \'2,5 - 12 m\'')
-    eucDistTmp = EucDistance("aaer416","","1","")
-    aaer436 = Con(eucDistTmp < 5, 436, 1)
-    aaer436.save(outPatch + "aaer436")
-    aaer426 = Con(eucDistTmp < 7, 426, 1)
-    aaer426.save(outPatch + "aaer426")
+    eucDistTemp = EucDistance("aaer416","","1","")
+    rasTemp = Con(eucDistTemp < 5, 436, 1)
+    rasTemp.save(outPatch + "aaer436")
+    rasTemp = Con(eucDistTemp < 7, 426, 1)
+    rasTemp.save(outPatch + "aaer426")
 
 # 427/437 - large streams (> 12 meter) (vandloeb_brudt)+ buffer
   if aaer437_c == 1:
@@ -517,11 +517,11 @@ try:
     feat_layer = "aaer417"
     arcpy.MakeFeatureLayer_management(feat_class,feat_layer)
     arcpy.SelectLayerByAttribute_management(feat_layer, "NEW_SELECTION", '"MIT_BREDDE" = \'over 12 m\'')
-    eucDistTmp = EucDistance("aaer417","","1","")
-    aaer437 = Con(eucDistTmp < 5, 437, 1)
-    aaer437.save(outPatch + "aaer437")
-    aaer427 = Con(eucDistTmp < 7, 427, 1)
-    aaer427.save(outPatch + "aaer427")
+    eucDistTemp = EucDistance("aaer417","","1","")
+    rasTemp = Con(eucDistTemp < 5, 437, 1)
+    rasTemp.save(outPatch + "aaer437")
+    rasTemp = Con(eucDistTemp < 7, 427, 1)
+    rasTemp.save(outPatch + "aaer427")
 
 # 420 - lake buffer zones (soer410)
   if sorn420_c == 1:
@@ -529,9 +529,9 @@ try:
     if arcpy.Exists(outPatch + "sorn420"):
       arcpy.Delete_management(outPatch + "sorn420")
       print "... deletes existing raster"
-    eucDistVejkant = EucDistance("soer","","1","")
-    sorn420 = Con(eucDistVejkant < 2.05, 420, 1)
-    sorn420.save(outPatch + "sorn420") 
+    eucDistTemp = EucDistance("soer","","1","")
+    rasTemp = Con(eucDistTemp < 2.05, 420, 1)
+    rasTemp.save(outPatch + "sorn420")
 
 # 505 - field buffer zones (mark505)  # Not used anymore
   if mark505_c == 1:
@@ -539,9 +539,9 @@ try:
     if arcpy.Exists(outPatch + "mark505"):
       arcpy.Delete_management(outPatch + "mark505")
       print "... deletes existing raster"
-    eucDistVejkant = EucDistance("MarkVJID12","","1","")
-    mark505 = Con(eucDistVejkant < 1.05, 505, 1)
-    mark505.save(outPatch + "mark505")
+    eucDistTemp = EucDistance("MarkVJID12","","1","")
+    rasTemp = Con(eucDistTemp < 1.05, 505, 1)
+    rasTemp.save(outPatch + "mark505")
 
 # mark1000 plus - converts field polygons and provides each polygon a unique id
   if mark1000_c == 1:
@@ -550,11 +550,11 @@ try:
       arcpy.Delete_management(outPatch + "mark1000")
       print "... deletes existing raster"
     arcpy.PolygonToRaster_conversion("MarkVJID12", "NYID", outPatch + "tmpRaster", "CELL_CENTER", "NONE", "1")
-    tmpIsNull = IsNull(outPatch + "tmpRaster")
+    rasIsNull = IsNull(outPatch + "tmpRaster")
     markNummerFirst = (Plus(outPatch + "tmpRaster", 0))
     markNummer = Int(markNummerFirst)
-    mark10000 = Con(tmpIsNull == 1, 1, markNummer)
-    mark10000.save(outPatch + "mark1000") 
+    rasTemp = Con(rasIsNull == 1, 1, markNummer)
+    rasTemp.save(outPatch + "mark1000")
    # arcpy.Delete_management(outPatch + "tmpRaster")
 
 # 620 - dikes (dige620)
@@ -563,9 +563,9 @@ try:
     if arcpy.Exists(outPatch + "dige620"):
       arcpy.Delete_management(outPatch + "dige620")
       print "... deletes existing raster"
-    eucDistTmp = EucDistance("dige", "", "1", "")
-    dige620 = Con(eucDistTmp < 1.2, 620, 1)
-    dige620.save(outPatch + "dige620")
+    eucDistTemp = EucDistance("dige", "", "1", "")
+    rasTemp = Con(eucDistTemp < 1.2, 620, 1)
+    rasTemp.save(outPatch + "dige620")
 
 # 625 - ancient culture trails (fred625)
   if fred625_c == 1:
@@ -573,9 +573,9 @@ try:
     if arcpy.Exists(outPatch + "fred625"):
       arcpy.Delete_management(outPatch + "trae640")
       print "... deletes existing raster"
-    eucDistTmp = EucDistance("fred_fortid", "", "1", "")
-    fred625 = Con(eucDistTmp < 6, 625, 1)
-    fred625.save(outPatch + "fred625")
+    eucDistTemp = EucDistance("fred_fortid", "", "1", "")
+    rasTemp = Con(eucDistTemp < 6, 625, 1)
+    rasTemp.save(outPatch + "fred625")
 
 # 630 - recreational areas (rekr630)
   if rekr630_c == 1:
@@ -585,19 +585,19 @@ try:
       print "... deletes existing raster"
     arcpy.PolygonToRaster_conversion("rekromr", "FEAT_KODE", outPatch + "tmpRaster", "CELL_CENTER", "NONE", "1")
     rasIsNull = IsNull(outPatch + "tmpRaster")
-    rekr630 = Con(rasIsNull == 1, 1, 630)
-    rekr630.save(outPatch + "rekr630")
+    rasTemp = Con(rasIsNull == 1, 1, 630)
+    rasTemp.save(outPatch + "rekr630")
     arcpy.Delete_management(outPatch + "tmpRaster")
 
-# 635 - hdgerows (hegn635)
+# 635 - hedgerows (hegn635)
   if hegn635_c == 1:
     print "Processing hedgerows..."
     if arcpy.Exists(outPatch + "hegn635"):
       arcpy.Delete_management(outPatch + "hegn635")
       print "... deletes existing raster"
-    eucDistTmp = EucDistance("hegn", "", "1", "")
-    hegn635 = Con(eucDistTmp < 2, 635, 1)
-    hegn635.save(outPatch + "hegn635")
+    eucDistTemp = EucDistance("hegn", "", "1", "")
+    rasTemp = Con(eucDistTemp < 2, 635, 1)
+    rasTemp.save(outPatch + "hegn635")
 
 # 640 - tree groups (trae640)
   if trae640_c == 1:
@@ -605,9 +605,9 @@ try:
     if arcpy.Exists(outPatch + "trae640"):
       arcpy.Delete_management(outPatch + "trae640")
       print "... deletes existing raster"
-    eucDistTmp = EucDistance("traegruppe", "", "1", "")
-    trae640 = Con(eucDistTmp < 8, 640, 1)
-    trae640.save(outPatch + "trae640")
+    eucDistTemp = EucDistance("traegruppe", "", "1", "")
+    rasTemp = Con(eucDistTemp < 8, 640, 1)
+    rasTemp.save(outPatch + "trae640")
 
 # 641 - individual trees (trae641)
   if trae641_c == 1:
@@ -615,9 +615,9 @@ try:
     if arcpy.Exists(outPatch + "trae641"):
       arcpy.Delete_management(outPatch + "trae641")
       print "... deletes existing raster"
-    eucDistTmp = EucDistance("trae", "", "1", "")
-    trae641 = Con(eucDistTmp < 4, 641, 1)
-    trae641.save(outPatch + "trae641")
+    eucDistTemp = EucDistance("trae", "", "1", "")
+    rasTemp = Con(eucDistTemp < 4, 641, 1)
+    rasTemp.save(outPatch + "trae641")
 
 # 650- gravel pits (raas650)
   if raas650_c == 1:
@@ -627,8 +627,8 @@ try:
       print "... deletes existing raster"
     arcpy.PolygonToRaster_conversion("raastof", "FEAT_KODE", outPatch + "tmpRaster", "CELL_CENTER", "NONE", "1")
     rasIsNull = IsNull(outPatch + "tmpRaster")
-    raas650 = Con(rasIsNull == 1, 1, 650)
-    raas650.save(outPatch + "raas650")
+    rasTemp = Con(rasIsNull == 1, 1, 650)
+    rasTemp.save(outPatch + "raas650")
     arcpy.Delete_management(outPatch + "tmpRaster")
 
 # 1100- AIS map (ais1100)
@@ -639,16 +639,21 @@ try:
       print "... deletes existing raster"
     arcpy.PolygonToRaster_conversion("ais100", "LUATYPE", outPatch + "tmpRaster", "CELL_CENTER", "NONE", "1")
     rasIsNull = IsNull(outPatch + "tmpRaster")
-    ais1100 = Con(rasIsNull == 1, 1, outPatch + "tmpRaster")
-    ais1100.save(outPatch + "ais1100")
+    rasTemp = Con(rasIsNull == 1, 1, outPatch + "tmpRaster")
+    rasTemp.save(outPatch + "ais1100")
     arcpy.Delete_management(outPatch + "tmpRaster")
 
+  rasTemp = ''
+
+
   gc.collect()  # Adresses memory problems
+
+
 
 # MOSAIC
 #*******************************************************************
 
-  arcpy.env.workspace = gis2DB   #workspace input for the mosaic process
+  #arcpy.env.workspace = gis2DB   #workspace input for the mosaic process
   print " "
 
   if vejnet_c == 1:   #Assembles a transportation theme for roads and road verges
@@ -656,50 +661,50 @@ try:
     if arcpy.Exists(outPatch + "T1_vejnet"):
       arcpy.Delete_management(outPatch + "T1_vejnet")
       print "... deletes existing raster"
-    vejRastList = [Raster ("vejk110"), Raster ("stie112"), Raster ("spor115"), Raster ("hjsp150"), Raster ("vind155"),
-                   Raster ("jern120"), Raster ("vu30122"), Raster ("vu60125"), Raster ("vu90130"), Raster ("park114"), Raster("landhav")]
-    vejnet = CellStatistics(vejRastList, "MAXIMUM", "DATA")    
+    rasterList = [Raster (outPatch + "vejk110"), Raster (outPatch + "stie112"), Raster (outPatch + "spor115"), Raster (outPatch + "hjsp150"), Raster (outPatch + "vind155"),
+                   Raster (outPatch + "jern120"), Raster (outPatch + "vu30122"), Raster (outPatch + "vu60125"), Raster (outPatch + "vu90130"), Raster (outPatch + "park114"), Raster(outPatch + "landhav")]
+    rasTemp = CellStatistics(rasterList, "MAXIMUM", "DATA")
        #  use next line if the road themes should be shrinked - remember to change 'vejnet' above to 'vejnet0'
        #  may result in 'stripes' or other artificial looking features
        #  vejnet = Shrink(vejnet0, 1, 1)
-    vejnet.save (outPatch + "T1_vejnet")
-    
-  if bebyggelser_c == 1:   #Assembles a built up theme 
-    print "Processing bebyggelser ..."
+    rasTemp.save (outPatch + "T1_vejnet")
+
+  if bebyggelser_c == 1:   #Assembles a built up theme
+    print "Processing built up theme..."
     if arcpy.Exists(outPatch + "T2_bebyggelser"):
       arcpy.Delete_management(outPatch + "T2_bebyggelser")
       print "... deletes existing raster"
-    bebyggelserRastList = [Raster ("lavb205"), Raster ("hojb210"), Raster ("byke215"), Raster ("kirk225"), Raster ("bygn250"), Raster ("sprt230"), Raster ("indu220"), Raster ("landhav")]
-    bebyggelser = CellStatistics(bebyggelserRastList, "MAXIMUM", "DATA")
-    bebyggelser.save (outPatch + "T2_bebyggelser")
+    rasterList = [Raster (outPatch + "lavb205"), Raster (outPatch + "hojb210"), Raster (outPatch + "byke215"), Raster (outPatch + "kirk225"), Raster (outPatch + "bygn250"), Raster (outPatch + "sprt230"), Raster (outPatch + "indu220"), Raster (outPatch + "landhav")]
+    rasTemp = CellStatistics(rasterList, "MAXIMUM", "DATA")
+    rasTemp.save (outPatch + "T2_bebyggelser")
 
-  if natur_c == 1:   #Assembles a natural areas theme 
-    print "Processing natural areas ..."
-    if arcpy.Exists(outPatch + "T3_natur"):
-      arcpy.Delete_management(outPatch + "T3_natur")
-      print "... deletes existing raster"
-    naturRastList = [Raster ("skrt105"), Raster ("skov310"), Raster ("krat315"), Raster ("sand320"), Raster ("hede325"), Raster ("vaad330"), Raster ("eng_355"), Raster ("hede360"), Raster ("mose365"), Raster ("over370"), Raster ("seng375"), Raster ("soe_380"), Raster ("landhav")]
-    natur = CellStatistics(naturRastList, "MAXIMUM", "DATA")
-    natur.save (outPatch + "T3_natur")  
-
-  if vaadnatur_c == 1:   #Assembles a 'wet nature' theme 
+  if vaadnatur_c == 1:   #Assembles a 'wet nature' theme
     print "Processing wet natural areas ..."
     if arcpy.Exists(outPatch + "T3_vaadnatur"):
       arcpy.Delete_management(outPatch + "T3_vaadnatur")
       print "... deletes existing raster"
-    vaadnaturRastList = [Raster ("mose365"), Raster ("soe_380"), Raster ("landhav")]
-    vaadnatur = CellStatistics(vaadnaturRastList, "MAXIMUM", "DATA")
-    vaadnatur.save (outPatch + "T3_vaadnatur")  
+    rasterList = [Raster (outPatch + "mose365"), Raster (outPatch + "soe_380"), Raster (outPatch + "landhav")]
+    rasTemp = CellStatistics(rasterList, "MAXIMUM", "DATA")
+    rasTemp.save (outPatch + "T3_vaadnatur")
 
-  if ferskvand_c == 1:   #Assembles a fresh water theme 
+  if ferskvand_c == 1:   #Assembles a fresh water theme
     print "Processing streams and lakes ..."
     if arcpy.Exists(outPatch + "T4_vand"):
       arcpy.Delete_management(outPatch + "T4_vand")
       print "... deletes existing raster"
-    vandRastList = [Raster ("soer440"), Raster ("aaer435"), Raster ("aaer436"), Raster ("aaer437"),
-                    Raster ("sorn420"), Raster ("aaer425"), Raster ("aaer426"), Raster ("aaer427"), Raster ("landhav")]
-    vand = CellStatistics(vandRastList, "MAXIMUM", "DATA")
-    vand.save (outPatch + "T4_vand")
+    rasterList = [Raster (outPatch + "soer440"), Raster (outPatch + "aaer435"), Raster (outPatch + "aaer436"), Raster (outPatch + "aaer437"),
+                    Raster (outPatch + "sorn420"), Raster (outPatch + "aaer425"), Raster (outPatch + "aaer426"), Raster (outPatch + "aaer427"), Raster (outPatch + "landhav")]
+    rasTemp = CellStatistics(rasterList, "MAXIMUM", "DATA")
+    rasTemp.save (outPatch + "T4_vand")
+
+  if natur_c == 1:   #Assembles a natural areas theme
+    print "Processing natural areas ..."
+    if arcpy.Exists(outPatch + "T3_natur"):
+      arcpy.Delete_management(outPatch + "T3_natur")
+      print "... deletes existing raster"
+    rasterList = [Raster (outPatch + "skrt105"), Raster (outPatch + "skov310"), Raster (outPatch + "krat315"), Raster (outPatch + "sand320"), Raster (outPatch + "hede325"), Raster (outPatch + "vaad330"), Raster (outPatch + "eng_355"), Raster (outPatch + "hede360"), Raster (outPatch + "mose365"), Raster (outPatch + "over370"), Raster (outPatch + "seng375"), Raster (outPatch + "soe_380"), Raster (outPatch + "landhav")]
+    rasTemp = CellStatistics(rasterList, "MAXIMUM", "DATA")
+    rasTemp.save (outPatch + "T3_natur")
 
   if kultur_c == 1:   # Assembles a theme of cultural features
     print "Processing hedgerows, dikes, trees, etc ..."
@@ -707,11 +712,11 @@ try:
       arcpy.Delete_management(outPatch + "T5_kultur")
       print "... deletes existing raster"
       # "fred625" = fredede fortidsminder
-    kulturRastList = [Raster ("dige620"), Raster ("fred625"), Raster ("rekr630"), Raster ("hegn635"), Raster ("trae640"), Raster ("trae641"),
-                    Raster ("raas650"), Raster ("landhav")]
-      # Denne raekkefoelge burde give mere mening.               
-    kultur = CellStatistics(kulturRastList, "MAXIMUM", "DATA")
-    kultur.save (outPatch + "T5_kultur")
+    rasterList = [Raster (outPatch + "dige620"), Raster (outPatch + "fred625"), Raster (outPatch + "rekr630"), Raster (outPatch + "hegn635"), Raster (outPatch + "trae640"), Raster (outPatch + "trae641"),
+                    Raster (outPatch + "raas650"), Raster (outPatch + "landhav")]
+      # Denne raekkefoelge burde give mere mening.
+    rasTemp = CellStatistics(rasterList, "MAXIMUM", "DATA")
+    rasTemp.save (outPatch + "T5_kultur")
 
   gc.collect()  # Adresses memory problems
 
@@ -719,26 +724,28 @@ try:
     print "Processing mosaic for all themes ..."
     if arcpy.Exists(outPatch + "Mosaik_rekl"):
       arcpy.Delete_management(outPatch + "Mosaik_rekl")
+      print "... deletes existing raster"
     if arcpy.Exists(outPatch + "Mosaik_raa"):
       arcpy.Delete_management(outPatch + "Mosaik_raa")
+      print "... deletes existing raster"
     if arcpy.Exists(outPatch + "Mosaik_almass"):
       arcpy.Delete_management(outPatch + "Mosaik_almass")
-      
-    print "... deleting existing rasters"
+      print "... deletes existing raster"
+
     print " "
 
- #  The raw mosaic is put together here. The script controls which layers a prioritized (on top) 
-    T1ve = Raster("T1_vejnet")
-    T2be = Raster("T2_bebyggelser")
-    T3na = Raster("T3_natur")
-    T3ana = Raster("T3_vaadnatur")
-    T4va = Raster("T4_vand")
-    T5ku = Raster("T5_kultur")
-    ais1100 = Raster("ais1100")  
-    mark1 = Raster("mark505")    # field boundary
-    mark2 = Raster("mark1000")   # fields
-    landhav = Raster("landhav")
-    bygn = Raster("bygn250")
+ #  The raw mosaic is put together here. The script controls which layers a prioritized (on top)
+    T1ve = Raster(outPatch + "T1_vejnet")
+    T2be = Raster(outPatch + "T2_bebyggelser")
+    T3na = Raster(outPatch + "T3_natur")
+    T3ana = Raster(outPatch + "T3_vaadnatur")
+    T4va = Raster(outPatch + "T4_vand")
+    T5ku = Raster(outPatch + "T5_kultur")
+    ais1100 = Raster(outPatch + "ais1100")
+    mark1 = Raster(outPatch + "mark505")    # field boundary
+    mark2 = Raster(outPatch + "mark1000")   # fields
+    landhav = Raster(outPatch + "landhav")
+    bygn = Raster(outPatch + "bygn250")
 
     step1 = Con(mark2 > 999, mark2, 1)                    # fields first
     print "fields added to mosaic ..."
@@ -762,6 +769,7 @@ try:
     mosaik1.save (outPatch + "Mosaik_raa")
     nowTime = time.strftime('%X %x')
     print "Raw mosaic assembled ..." + nowTime
+    print "  "
 
 # reclassify to ALMaSS raster values
     mosaik2 = ReclassByASCIIFile(mosaik1, reclasstable, "DATA")
@@ -773,7 +781,7 @@ try:
     regionALM = RegionGroup(mosaik2,"EIGHT","WITHIN","ADD_LINK","")
     regionALM.save(outPatch + "Mosaik_almass")
     nowTime = time.strftime('%X %x')
-    print "Regionalisation done ..." + nowTime
+    print "Regionalization done ..." + nowTime
 
 # convert regionalised map to export ascii  - keep the file name - the program to make the lsb file will be looking for it.
     arcpy.RasterToASCII_conversion(regionALM, asciiexp)
@@ -781,7 +789,7 @@ try:
 
   endTime = time.strftime('%X %x')
   print ""
-  print "The End: " + endTime
+  print "Landscape generated: " + endTime
 
 
 except:
