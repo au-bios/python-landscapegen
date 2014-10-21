@@ -648,7 +648,7 @@ try:
 # MOSAIC
 
   if vejnet_c == 1:   #Assembles a transportation theme for roads and road verges
-    print "Processing roads theme ..."
+    print "Processing road theme ..."
     if arcpy.Exists(outPath + "T1_vejnet"):
       arcpy.Delete_management(outPath + "T1_vejnet")
       print "... deleting existing raster"
