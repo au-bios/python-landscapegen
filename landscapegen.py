@@ -1,8 +1,8 @@
 # -*- coding: cp1252 -*-
 # Name: twoInOne vs 1
-# Purpose: This script combines conversion and mosaic
+# Purpose: This script combines conversion- and mosaic scripts in one
 # Flemming Skov - Oct2014
-# Last updated: October 19, 2014
+# Last large update: October 19, 2014
 
 # IMPORT SYSTEM MODULES
 import arcpy, traceback, sys, time, gc
@@ -21,7 +21,6 @@ gisDB = "C:/pytest/gis/dkgis.gdb"                                              #
 scratchDB = "C:/pytest/scratch"                                                # scratch folder for tempfiles
 asciiexp = "C:/pytest/ASCII_kalo.txt"                                          # export in ascii (for ALMaSS)
 reclasstable = "C:/pytest/reclass1.txt"                                        # reclass ascii table
-#gis2DB = outPath                                                             # input to mosaic (results from conversion) to mosaic process
 
 # MODEL SETTINGS
 arcpy.env.overwriteOutput = True
@@ -32,19 +31,18 @@ arcpy.env.mask = localSettings
 arcpy.env.cellSize = localSettings
 print "... model settings read"
 
-# CONTROLS which processes are executed
-# *************************************
+# MODEL EXECUTION - controls which processes are executed
 
 default = 1
 
 #MOSAIC
-vejnet_c = default
-bebyggelser_c = default
-natur_c = default
-vaadnatur_c = default
-ferskvand_c = default
-kultur_c = default
-mosaik_c = default
+vejnet_c = default      #create road theme
+bebyggelser_c = default #create built up theme
+natur_c = default       #create nature theme
+vaadnatur_c = default   #create wet nature theme
+ferskvand_c = default   #create fresh water theme
+kultur_c = default      #create culturral feature theme
+mosaik_c = default      #create assemble final mosaic
 
 #CONVERSION  - features to raster layers
 landhav_c = default   #land_sea
@@ -105,7 +103,6 @@ print " "
 try:
 
 # CONVERSION - from feature layers to raster
-#*******************************************
 
 # 1 - land and sea (land_hav)
   if landhav_c == 1:
@@ -644,17 +641,11 @@ try:
     arcpy.Delete_management(outPath + "tmpRaster")
 
   rasTemp = ''
-
+  print " "
 
   gc.collect()  # Adresses memory problems
 
-
-
 # MOSAIC
-#*******************************************************************
-
-  #arcpy.env.workspace = gis2DB   #workspace input for the mosaic process
-  print " "
 
   if vejnet_c == 1:   #Assembles a transportation theme for roads and road verges
     print "Processing roads theme ..."
@@ -791,7 +782,6 @@ try:
   print ""
   print "Landscape generated: " + endTime
 
-
 except:
     tb = sys.exc_info()[2]
     tbinfo = traceback.format_tb(tb)[0]
@@ -806,6 +796,3 @@ except:
 
     arcpy.AddMessage(arcpy.GetMessages(1))
     print arcpy.GetMessages(1)
-
-
-
