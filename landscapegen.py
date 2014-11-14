@@ -33,7 +33,7 @@ print "... model settings read"
 
 # MODEL EXECUTION - controls which processes are executed
 
-default = 1
+default = 0
 
 #MOSAIC
 vejnet_c = default      #create road theme
@@ -45,8 +45,8 @@ kultur_c = default      #create culturral feature theme
 mosaik_c = default      #create assemble final mosaic
 
 #CONVERSION  - features to raster layers
-landhav_c = default   #land_sea
-skrt105_c = default   #slopes along roads
+landhav_c = 1   #land_sea
+skrt105_c = 1   #slopes along roads
 vejk110_c = default   #road verges
 stie112_c = default   #paths
 park114_c = default   #parking areas
@@ -57,7 +57,7 @@ vu60125_c = default   #medium sized roads (3-6 meter)
 vu90130_c = default   #large roads (> 6 meter)
 hjsp150_c = default   #pylons
 vind155_c = default   #wind turbines
-lavb205_c = default   #built up areas low
+lavb205_c = 1   #built up areas low
 hojb210_c = default   #built up areas high
 byke215_c = default   #city center
 indu220_c = default   #industrial areas
