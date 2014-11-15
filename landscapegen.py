@@ -3,6 +3,7 @@
 # Purpose: This script combines conversion- and mosaic scripts in one
 # Flemming Skov - Oct2014
 # Last large update: October 19, 2014
+#  This version uses the new field polygon theme that covers all of Denmark
 
 # IMPORT SYSTEM MODULES
 import arcpy, traceback, sys, time, gc
@@ -15,7 +16,7 @@ print "Model landscape generator started: " + nowTime
 print "... system modules checked"
 
 # DATA - paths to data, output gdb, scratch folder and model landscape mask
-outPath = "C:/pytest/aa.gdb/"                                                 # saves maps here
+outPath = "C:/pytest/aa.gdb/"                                                  # saves maps here
 localSettings = "C:/pytest/project.gdb/aamask"                                 # project folder with mask
 gisDB = "C:/pytest/gis/dkgis.gdb"                                              # input features
 scratchDB = "C:/pytest/scratch"                                                # scratch folder for tempfiles
@@ -45,8 +46,8 @@ kultur_c = default      #create culturral feature theme
 mosaik_c = default      #create assemble final mosaic
 
 #CONVERSION  - features to raster layers
-landhav_c = 1   #land_sea
-skrt105_c = 1   #slopes along roads
+landhav_c = default   #land_sea
+skrt105_c = default   #slopes along roads
 vejk110_c = default   #road verges
 stie112_c = default   #paths
 park114_c = default   #parking areas
@@ -57,7 +58,7 @@ vu60125_c = default   #medium sized roads (3-6 meter)
 vu90130_c = default   #large roads (> 6 meter)
 hjsp150_c = default   #pylons
 vind155_c = default   #wind turbines
-lavb205_c = 1   #built up areas low
+lavb205_c = default   #built up areas low
 hojb210_c = default   #built up areas high
 byke215_c = default   #city center
 indu220_c = default   #industrial areas
@@ -536,7 +537,7 @@ try:
     if arcpy.Exists(outPath + "mark505"):
       arcpy.Delete_management(outPath + "mark505")
       print "... deleting existing raster"
-    eucDistTemp = EucDistance("MarkVJID12","","1","")
+    eucDistTemp = EucDistance("MarkerDK2013","","1","")
     rasTemp = Con(eucDistTemp < 1.05, 505, 1)
     rasTemp.save(outPath + "mark505")
 
@@ -546,7 +547,7 @@ try:
     if arcpy.Exists(outPath + "mark1000"):
       arcpy.Delete_management(outPath + "mark1000")
       print "... deleting existing raster"
-    arcpy.PolygonToRaster_conversion("MarkVJID12", "NYID", outPath + "tmpRaster", "CELL_CENTER", "NONE", "1")
+    arcpy.PolygonToRaster_conversion("MarkerDK2013", "markpolyID", outPath + "tmpRaster", "CELL_CENTER", "NONE", "1")
     rasIsNull = IsNull(outPath + "tmpRaster")
     markNummerFirst = (Plus(outPath + "tmpRaster", 0))
     markNummer = Int(markNummerFirst)
