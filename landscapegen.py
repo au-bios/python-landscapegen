@@ -16,8 +16,8 @@ print "Model landscape generator started: " + nowTime
 print "... system modules checked"
 
 # DATA - paths to data, output gdb, scratch folder and model landscape mask
-outPath = "C:/pytest/aa.gdb/"                                                  # saves maps here
-localSettings = "C:/pytest/project.gdb/aamask"                                 # project folder with mask
+outPath = "C:/pytest/houlbjerg.gdb/"                                                  # saves maps here
+localSettings = "C:/pytest/project.gdb/houlmask"                                 # project folder with mask
 gisDB = "C:/pytest/gis/dkgis.gdb"                                              # input features
 scratchDB = "C:/pytest/scratch"                                                # scratch folder for tempfiles
 asciiexp = "C:/pytest/ASCII_kalo.txt"                                          # export in ascii (for ALMaSS)
@@ -34,7 +34,7 @@ print "... model settings read"
 
 # MODEL EXECUTION - controls which processes are executed
 
-default = 0
+default = 1
 
 #MOSAIC
 vejnet_c = default      #create road theme
