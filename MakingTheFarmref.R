@@ -22,7 +22,7 @@ The2013Farmref[,BedriftID:= gsub(pattern = ',', replacement = '', x = The2013Far
 The2013Farmref[,BedriftID:= as.numeric(The2013Farmref$BedriftID)]  # Potentially risky...
 setkey(The2013Farmref, 'BedriftID')
 
-path = paste('o:/ST_LandskabsGenerering/outputs/The2013Farmref', Sys.Date(),'.txt', sep = '')
+path ='o:/ST_LandskabsGenerering/outputs/The2013Farmref.txt'
 WritePolyref(Table = The2013Farmref, PathToFile = path)  #See ?WritePolyref for documentation.
 
 # ¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤ #
