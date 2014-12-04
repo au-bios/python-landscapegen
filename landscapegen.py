@@ -1,9 +1,9 @@
-# -*- coding: cp1252 -*-
-# Name: twoInOne vs 1
-# Purpose: This script combines conversion- and mosaic scripts in one
-# Flemming Skov - Oct2014
+# =========================================================================
+# Name: Landscape generator  -  landscapegen
+# Purpose: The script convert feature layers to rasters and assembles a landuse mosaic
+# Authors: Flemming Skov & Lars Dalby - Oct-Dec 2014
 # Last large update: October 19, 2014
-#  This version uses the new field polygon theme that covers all of Denmark
+# Note:  This version uses the new field polygon theme that covers all of Denmark
 
 # IMPORT SYSTEM MODULES
 import arcpy, traceback, sys, time, gc
@@ -16,12 +16,12 @@ print "Model landscape generator started: " + nowTime
 print "... system modules checked"
 
 # DATA - paths to data, output gdb, scratch folder and model landscape mask
-outPath = "C:/pytest/houlbjerg.gdb/"                                                  # saves maps here
-localSettings = "C:/pytest/project.gdb/houlmask"                                 # project folder with mask
-gisDB = "C:/pytest/gis/dkgis.gdb"                                              # input features
-scratchDB = "C:/pytest/scratch"                                                # scratch folder for tempfiles
-asciiexp = "C:/pytest/ASCII_kalo.txt"                                          # export in ascii (for ALMaSS)
-reclasstable = "C:/pytest/reclass1.txt"                                        # reclass ascii table
+outPath = "O:/ST_LandskabsGenerering/outputs/kvadrater/haslev/haslev.gdb/"                    # saves maps here
+localSettings = "O:/ST_LandskabsGenerering/outputs/kvadrater/haslev/project.gdb/haslevmask"   # project folder with mask
+gisDB = "O:/ST_LandskabsGenerering/gis/dkgis.gdb"                                             # input features
+scratchDB = "O:/ST_LandskabsGenerering/outputs/kvadrater/haslev/scratch"                      # scratch folder for tempfiles
+asciiexp = "O:/ST_LandskabsGenerering/outputs/kvadrater/haslev/ASCII_haslev.txt"              # export in ascii (for ALMaSS)
+reclasstable = "O:/ST_LandskabsGenerering/outputs/kvadrater/haslev/reclass.txt"               # reclass ascii table
 
 # MODEL SETTINGS
 arcpy.env.overwriteOutput = True
@@ -34,7 +34,7 @@ print "... model settings read"
 
 # MODEL EXECUTION - controls which processes are executed
 
-default = 1
+default = 1  # 1 -> run process; 0 -> not run process
 
 #MOSAIC
 vejnet_c = default      #create road theme
@@ -565,7 +565,7 @@ try:
     rasTemp = Con(eucDistTemp < 1.2, 620, 1)
     rasTemp.save(outPath + "dige620")
 
-# 625 - ancient culture trails (fred625)
+# 625 - archeological sites (fred625)
   if fred625_c == 1:
     print "Processing ancient cultural trails ..."
     if arcpy.Exists(outPath + "fred625"):
