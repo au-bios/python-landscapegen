@@ -15,8 +15,8 @@ if(!require(ralmass))
 library(ralmass)
 library(data.table)
 
-PathToFile = 'o:/ST_LandskabsGenerering/kvadrater/haslev/'  # The attribute table from NAME_almass. It needs to be exported from ArcGIS.
-FileName = 'HaslevAttr.txt'
+PathToFile = 'o:/ST_LandskabsGenerering/outputs/kvadrater/karup/'  # The attribute table from NAME_almass. It needs to be exported from ArcGIS.
+FileName = 'karupAttr.txt'
 attr = fread(paste(PathToFile, FileName, sep = ''))
 cleanattr = CleanAttrTable(AttrTable = attr, Soiltype = TRUE)  # see ?CleanAttrTable for documentation
 dim(cleanattr)
@@ -32,14 +32,15 @@ str(targetfarms)
 #	    			The farm info  						   #
 # ¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤ #
 # Here we get the merge farminformation back onto the markpolyID:
-farm = fread('o:/ST_LandskabsGenerering/outputs/Houlbjerg/FarmInfo2013.txt')
+farm = fread('o:/ST_LandskabsGenerering/outputs/FarmInfo2013.txt')
 farminfo = farm[, c('AlmassCode', 'markpolyID', 'BedriftID', 'BedriftPlusID', 'AfgKode'), with = FALSE]  # Extract only the columns we need for now
 farminfo[,markpolyID:= gsub(pattern = ',', replacement = '', x = farminfo$markpolyID, fixed = FALSE)]  # Fix seperator issue
 farminfo[,markpolyID:= as.numeric(farminfo$markpolyID)]
 setkey(farminfo, 'markpolyID')
 
-unique(farminfo[, AlmassCode])  # Issue with #N/A
+unique(farminfo[, AlmassCode])  # Issue with #N/A and type 59 (old code)
 farminfo[AlmassCode == '#N/A', AlmassCode:=999,]
+farminfo[AlmassCode == '59',AlmassCode:=216]  # Translate to the new code
 farminfo[,AlmassCode:= as.numeric(farminfo$AlmassCode)]
 unique(farminfo[, AlmassCode])  # Okay.
 
@@ -63,9 +64,9 @@ SnF[is.na(Soiltype)]  # Some polygons didn't get a soiltype. Assign something el
 # If you want to assign the most frequent type in DK use the following two lines:
 # Otherwise we assign a code we can recognize and check further down if any of these
 # are in the target landscape.
-# TheMostFrequent = as.numeric(names(table(SnF[,Soiltype])[which(table(SnF[,Soiltype]) == max(table(SnF[,Soiltype])))]))
-# SnF[is.na(Soiltype), Soiltype:=TheMostFrequent,]
-SnF[is.na(Soiltype), Soiltype:=999,]
+TheMostFrequent = as.numeric(names(table(SnF[,Soiltype])[which(table(SnF[,Soiltype]) == max(table(SnF[,Soiltype])))]))
+SnF[is.na(Soiltype), Soiltype:=TheMostFrequent,]
+# SnF[is.na(Soiltype), Soiltype:=999,]
 SnF[, BedriftPlusID:=NULL]
 SnF[, AfgKode:=NULL]
 SnF[,BedriftID:= gsub(pattern = ',', replacement = '', x = SnF$BedriftID, fixed = FALSE)]
@@ -86,8 +87,16 @@ temp[,BedriftID:=NULL]
 result = rbind(cleanattr, temp)  # This is essentially putting the fields and everything else back together.
 999 %in% unique(result[, Soiltype])  # Should be false (otherwise you need to decide what to do where fields have no soil type)
 
+# ¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤ #
+#	 Check and clean out farmrefs to types that shouldn't have one 	   #
+# ¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤ #
+
+result[ElementType == 12, Farmref:=-1]  # AmenityGrass should not have a Farmref
+result[ElementType == 110, Farmref:=-1]  # NaturalGrass should not have a Farmref
+unique(farminfo[, AlmassCode])  # Okay.
+
 dim(result) 
 dim(attr)  # Okay.
 setkey(result, 'PolygonID')
-FileName = 'HaslevPolyRef.txt'  # The name of the polyref file
+FileName = 'KarupPolyRef.txt'  # The name of the polyref file
 WritePolyref(Table = result, PathToFile = paste(PathToFile, FileName, sep = ''))  # see ?WritePolyref for docu.
