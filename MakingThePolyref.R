@@ -39,8 +39,9 @@ farminfo[,markpolyID:= as.numeric(farminfo$markpolyID)]
 setkey(farminfo, 'markpolyID')
 
 unique(farminfo[, AlmassCode])  # Issue with #N/A and type 59 (old code)
-farminfo[AlmassCode == '#N/A', AlmassCode:=999,]
+farminfo[AlmassCode == '#N/A', AlmassCode:=20,]  # If no info, we assign field
 farminfo[AlmassCode == '59',AlmassCode:=216]  # Translate to the new code
+farminfo[AlmassCode == '71',AlmassCode:=214]  # Translate to the new code
 farminfo[,AlmassCode:= as.numeric(farminfo$AlmassCode)]
 unique(farminfo[, AlmassCode])  # Okay.
 
