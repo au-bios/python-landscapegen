@@ -15,15 +15,16 @@ if(!require(ralmass))
 library(ralmass)
 library(data.table)
 
-PathToFile = 'o:/ST_LandskabsGenerering/outputs/kvadrater/karup/'  # The attribute table from NAME_almass. It needs to be exported from ArcGIS.
-FileName = 'karupAttr.txt'
+PathToFile = 'o:/ST_LandskabsGenerering/outputs/kvadrater/esbjerg/'  # The attribute table from NAME_almass. It needs to be exported from ArcGIS.
+LandscapeName = 'Esbjerg'
+FileName = paste(LandscapeName, 'Attr.txt', sep = '')
 attr = fread(paste(PathToFile, FileName, sep = ''))
 cleanattr = CleanAttrTable(AttrTable = attr, Soiltype = TRUE)  # see ?CleanAttrTable for documentation
 dim(cleanattr)
-setkey(cleanattr, 'ElementType')
-targetfarms = cleanattr[ElementType >= 10000]  # Get the fields
+setkey(cleanattr, 'PolyType')
+targetfarms = cleanattr[PolyType >= 10000]  # Get the fields
 targetfarms[,Soiltype:=NULL]
-cleanattr = cleanattr[ElementType < 10000]  # Get the rest
+cleanattr = cleanattr[PolyType < 10000]  # Get the rest
 dim(cleanattr)
 str(targetfarms)
 
@@ -39,9 +40,9 @@ farminfo[,markpolyID:= as.numeric(farminfo$markpolyID)]
 setkey(farminfo, 'markpolyID')
 
 unique(farminfo[, AlmassCode])  # Issue with #N/A and type 59 (old code)
-farminfo[AlmassCode == '#N/A', AlmassCode:=20,]  # If no info, we assign field
-farminfo[AlmassCode == '59',AlmassCode:=216]  # Translate to the new code
-farminfo[AlmassCode == '71',AlmassCode:=214]  # Translate to the new code
+farminfo[AlmassCode == '#N/A', AlmassCode:='20',]  # If no info, we assign field
+farminfo[AlmassCode == '59',AlmassCode:='216']  # Translate to the new code
+farminfo[AlmassCode == '71',AlmassCode:='214']  # Translate to the new code
 farminfo[,AlmassCode:= as.numeric(farminfo$AlmassCode)]
 unique(farminfo[, AlmassCode])  # Okay.
 
@@ -65,9 +66,9 @@ SnF[is.na(Soiltype)]  # Some polygons didn't get a soiltype. Assign something el
 # If you want to assign the most frequent type in DK use the following two lines:
 # Otherwise we assign a code we can recognize and check further down if any of these
 # are in the target landscape.
-TheMostFrequent = as.numeric(names(table(SnF[,Soiltype])[which(table(SnF[,Soiltype]) == max(table(SnF[,Soiltype])))]))
-SnF[is.na(Soiltype), Soiltype:=TheMostFrequent,]
-# SnF[is.na(Soiltype), Soiltype:=999,]
+# TheMostFrequent = as.numeric(names(table(SnF[,Soiltype])[which(table(SnF[,Soiltype]) == max(table(SnF[,Soiltype])))]))
+# SnF[is.na(Soiltype), Soiltype:=TheMostFrequent,]
+SnF[is.na(Soiltype), Soiltype:=999,]
 SnF[, BedriftPlusID:=NULL]
 SnF[, AfgKode:=NULL]
 SnF[,BedriftID:= gsub(pattern = ',', replacement = '', x = SnF$BedriftID, fixed = FALSE)]
@@ -76,11 +77,11 @@ SnF[,BedriftID:= as.numeric(SnF$BedriftID)]
 # ¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤ #
 #	 Insert almasscode and soiltype the right places 	   #
 # ¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤ #
-setnames(SnF, old = 'markpolyID', new =  'ElementType')  # Quick fix for an easier merge
-setkey(SnF, 'ElementType')
+setnames(SnF, old = 'markpolyID', new =  'PolyType')  # Quick fix for an easier merge
+setkey(SnF, 'PolyType')
 
 temp = merge(x = targetfarms, y = SnF, all.x = TRUE)  # Okay, now we just need to move around a bit
-temp[,ElementType:=AlmassCode]
+temp[,PolyType:=AlmassCode]
 temp[,AlmassCode:=NULL]
 temp[,Farmref:=BedriftID]
 temp[,BedriftID:=NULL]
@@ -92,12 +93,22 @@ result = rbind(cleanattr, temp)  # This is essentially putting the fields and ev
 #	 Check and clean out farmrefs to types that shouldn't have one 	   #
 # ¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤ #
 
-result[ElementType == 12, Farmref:=-1]  # AmenityGrass should not have a Farmref
-result[ElementType == 110, Farmref:=-1]  # NaturalGrass should not have a Farmref
+result[PolyType == 12, Farmref:=-1]  # AmenityGrass should not have a Farmref
+result[PolyType == 110, Farmref:=-1]  # NaturalGrass should not have a Farmref
 unique(farminfo[, AlmassCode])  # Okay.
 
 dim(result) 
 dim(attr)  # Okay.
-setkey(result, 'PolygonID')
-FileName = 'KarupPolyRef.txt'  # The name of the polyref file
+setkey(result, 'PolyRefNum')
+FileName = paste(LandscapeName, 'PolyRef.txt', sep = '')  # The name of the polyref file
 WritePolyref(Table = result, PathToFile = paste(PathToFile, FileName, sep = ''))  # see ?WritePolyref for docu.
+
+# ¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤ #
+#			 Make a small farmref file to go with the landscape 		#
+# ¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤ #
+farm = fread('o:/ST_LandskabsGenerering/outputs/The2013Farmref.txt')
+setnames(farm, c('Farmref', 'FarmType'))
+landscapefarms = farm[Farmref %in% unique(result[,Farmref]),]
+FileName = paste(LandscapeName, 'Farmref.txt', sep = '')  # The name of the farmref file
+WritePolyref(Table = landscapefarms, PathToFile = paste(PathToFile, FileName, sep = ''), Headers = FALSE, Type = 'Farm')  # see ?WritePolyref for docu.
+
