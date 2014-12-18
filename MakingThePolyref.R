@@ -15,8 +15,8 @@ if(!require(ralmass))
 library(ralmass)
 library(data.table)
 
-PathToFile = 'o:/ST_LandskabsGenerering/outputs/kvadrater/esbjerg/'  # The attribute table from NAME_almass. It needs to be exported from ArcGIS.
-LandscapeName = 'Esbjerg'
+PathToFile = 'o:/ST_LandskabsGenerering/outputs/kvadrater/kolding/'  # The attribute table from NAME_almass. It needs to be exported from ArcGIS.
+LandscapeName = 'Kolding'
 FileName = paste(LandscapeName, 'Attr.txt', sep = '')
 attr = fread(paste(PathToFile, FileName, sep = ''))
 cleanattr = CleanAttrTable(AttrTable = attr, Soiltype = TRUE)  # see ?CleanAttrTable for documentation
