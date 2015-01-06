@@ -43,7 +43,7 @@ natur_c = default       #create nature theme
 vaadnatur_c = default   #create wet nature theme
 ferskvand_c = default   #create fresh water theme
 kultur_c = default      #create culturral feature theme
-mosaik_c = default      #create assemble final mosaic
+mosaik_c = default      #assemble final mosaic
 
 #CONVERSION  - features to raster layers
 landhav_c = default   #land_sea
@@ -103,7 +103,7 @@ print " "
 
 try:
 
-# CONVERSION - from feature layers to raster
+# 1) CONVERSION - from feature layers to raster
 
 # 1 - land and sea (land_hav)
   if landhav_c == 1:
@@ -247,7 +247,7 @@ try:
     rasTemp.save(outPath + "hojb210")
     arcpy.Delete_management(outPath + "tmpRaster")
 
-# 215 - city center  - (byke205)
+# 215 - city center - (byke205)
   if byke215_c == 1:
     print "Processing city center ..."
     if arcpy.Exists(outPath + "byke215"):
@@ -646,7 +646,7 @@ try:
 
   gc.collect()  # Adresses memory problems
 
-# MOSAIC
+# 2) Combine rasters to thematic maps 
 
   if vejnet_c == 1:   #Assembles a transportation theme for roads and road verges
     print "Processing road theme ..."
@@ -726,7 +726,8 @@ try:
 
     print " "
 
- #  The raw mosaic is put together here. The script controls which layers a prioritized (on top)
+ # 3) Stack the thematic maps 
+ # The raw mosaic is put together here. The script controls which layers a prioritized (on top)
     T1ve = Raster(outPath + "T1_vejnet")
     T2be = Raster(outPath + "T2_bebyggelser")
     T3na = Raster(outPath + "T3_natur")
@@ -773,9 +774,9 @@ try:
     regionALM = RegionGroup(mosaik2,"EIGHT","WITHIN","ADD_LINK","")
     regionALM.save(outPath + "Mosaik_almass")
     nowTime = time.strftime('%X %x')
-    print "Regionalization done ..." + nowTime
+    print "Regionalisation done ..." + nowTime
 
-# convert regionalised map to export ascii  - keep the file name - the program to make the lsb file will be looking for it.
+# convert regionalised map to ascii
     arcpy.RasterToASCII_conversion(regionALM, asciiexp)
     print "Conversion to ASCII done ..." + nowTime
 
