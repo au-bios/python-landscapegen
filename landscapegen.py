@@ -1,11 +1,8 @@
 # =========================================================================
-## @package Landscape generator  -  landscapegen
+# Name: Landscape generator  -  landscapegen
 # Purpose: The script convert feature layers to rasters and assembles a landuse mosaic
-#
 # Authors: Flemming Skov & Lars Dalby - Oct-Dec 2014
-#
 # Last large update: October 19, 2014
-#
 # Note:  This version uses the new field polygon theme that covers all of Denmark
 
 # IMPORT SYSTEM MODULES
