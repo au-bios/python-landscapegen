@@ -106,7 +106,7 @@ WritePolyref(Table = result, PathToFile = paste(PathToFile, FileName, sep = ''))
 # ¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤ #
 #			 Make a small farmref file to go with the landscape 		#
 # ¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤ #
-farm = fread('o:/ST_LandskabsGenerering/outputs/The2013Farmref.txt')
+farm = fread('o:/ST_LandskabsGenerering/outputs/The2013Farmref_UsrDefFarmNumFix.txt')
 setnames(farm, c('Farmref', 'FarmType'))
 landscapefarms = farm[Farmref %in% unique(result[,Farmref]),]
 FileName = paste(LandscapeName, 'Farmref.txt', sep = '')  # The name of the farmref file
