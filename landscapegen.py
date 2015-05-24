@@ -1,6 +1,6 @@
-# =========================================================================
+# =======================================================================================================================
 # Name: Landscape generator  -  landscapegen
-# Purpose: The script convert feature layers to rasters and assembles a landuse mosaic
+# Purpose: The script convert feature layers to rasters and assemble a surface covering land-use map
 # Authors: Flemming Skov & Lars Dalby - Oct-Dec 2014
 # Last large update: October 19, 2014
 # Note:  This version uses the new field polygon theme that covers all of Denmark
@@ -81,7 +81,6 @@ aaer435_c = default   #small streams (< 2.5 meter)
 aaer436_c = default   #medium streams (2.5 - 12 meter)
 aaer437_c = default   #large streams (> 12 meter)
 sorn420_c = default   #lake buffer
-mark505_c = default   #field buffer
 mark1000_c = default  #fields
 dige620_c = default   #dikes
 fred625_c = default   #archeological sites
@@ -531,17 +530,7 @@ try:
     rasTemp = Con(eucDistTemp < 2.05, 420, 1)
     rasTemp.save(outPath + "sorn420")
 
-# 505 - field buffer zones (mark505)  # Not used anymore
-  if mark505_c == 1:
-    print "Processing field buffers ..."
-    if arcpy.Exists(outPath + "mark505"):
-      arcpy.Delete_management(outPath + "mark505")
-      print "... deleting existing raster"
-    eucDistTemp = EucDistance("MarkerDK2013","","1","")
-    rasTemp = Con(eucDistTemp < 1.05, 505, 1)
-    rasTemp.save(outPath + "mark505")
-
-# mark1000 plus - converts field polygons and provides each polygon a unique id
+# mark1000 plus - converts field polygons and assign each polygon a unique id
   if mark1000_c == 1:
     print "Processing field polygons ..."
     if arcpy.Exists(outPath + "mark1000"):
@@ -644,8 +633,7 @@ try:
   rasTemp = ''
   print " "
 
-  gc.collect()  # Adresses memory problems
-
+  
 # 2) Combine rasters to thematic maps 
 
   if vejnet_c == 1:   #Assembles a transportation theme for roads and road verges
@@ -656,8 +644,8 @@ try:
     rasterList = [Raster (outPath + "vejk110"), Raster (outPath + "stie112"), Raster (outPath + "spor115"), Raster (outPath + "hjsp150"), Raster (outPath + "vind155"),
                    Raster (outPath + "jern120"), Raster (outPath + "vu30122"), Raster (outPath + "vu60125"), Raster (outPath + "vu90130"), Raster (outPath + "park114"), Raster(outPath + "landhav")]
     rasTemp = CellStatistics(rasterList, "MAXIMUM", "DATA")
-       #  use next line if the road themes should be shrinked - remember to change 'vejnet' above to 'vejnet0'
-       #  may result in 'stripes' or other artificial looking features
+       #  use next line if the road themes should be shrunk - remember to change 'vejnet' above to 'vejnet0'
+       #  may result in 'stripes' or other artificial looking features: @todo: Hvad kan resultere i stripes?
        #  vejnet = Shrink(vejnet0, 1, 1)
     rasTemp.save (outPath + "T1_vejnet")
 
@@ -703,16 +691,14 @@ try:
     if arcpy.Exists(outPath + "T5_kultur"):
       arcpy.Delete_management(outPath + "T5_kultur")
       print "... deleting existing raster"
-      # "fred625" = fredede fortidsminder
     rasterList = [Raster (outPath + "dige620"), Raster (outPath + "fred625"), Raster (outPath + "rekr630"), Raster (outPath + "hegn635"), Raster (outPath + "trae640"), Raster (outPath + "trae641"),
                     Raster (outPath + "raas650"), Raster (outPath + "landhav")]
-      # Denne raekkefoelge burde give mere mening.
     rasTemp = CellStatistics(rasterList, "MAXIMUM", "DATA")
     rasTemp.save (outPath + "T5_kultur")
 
-  gc.collect()  # Adresses memory problems
-
-  if mosaik_c == 1:   # Assemble the raw mosaic - controls which layers have priorithy and end on top
+# Assemble the raw map
+# First delete any existing layers
+  if mosaik_c == 1:   
     print "Processing mosaic for all themes ..."
     if arcpy.Exists(outPath + "Mosaik_rekl"):
       arcpy.Delete_management(outPath + "Mosaik_rekl")
@@ -727,7 +713,7 @@ try:
     print " "
 
  # 3) Stack the thematic maps 
- # The raw mosaic is put together here. The script controls which layers a prioritized (on top)
+ # The raw map is put together here.  Here the hierarchy of individual themes is determined
     T1ve = Raster(outPath + "T1_vejnet")
     T2be = Raster(outPath + "T2_bebyggelser")
     T3na = Raster(outPath + "T3_natur")
@@ -735,14 +721,13 @@ try:
     T4va = Raster(outPath + "T4_vand")
     T5ku = Raster(outPath + "T5_kultur")
     ais1100 = Raster(outPath + "ais1100")
-    mark1 = Raster(outPath + "mark505")    # field boundary
-    mark2 = Raster(outPath + "mark1000")   # fields
+    mark = Raster(outPath + "mark1000")   # fields
     landhav = Raster(outPath + "landhav")
     bygn = Raster(outPath + "bygn250")
 
-    step1 = Con(mark2 > 999, mark2, 1)                    # fields first
+    step1 = Con(mark > 999, mark, 1)                    # fields first
     print "fields added to mosaic ..."
-    step2 = Con(T4va == 1, step1, T4va)                   # fresh water on top
+    step2 = Con(T4va == 1, step1, T4va)                   # freshwater on top
     print "fresh water added to mosaic ..."
     step3 = Con(step2 == 1, T3na, step2)                  # natural areas on NOT (fields, water)
     print "natural areas added to mosaic ..."
@@ -764,7 +749,9 @@ try:
     print "Raw mosaic assembled ..." + nowTime
     print "  "
 
-# reclassify to ALMaSS raster values
+# Reclassify to ALMaSS raster values
+# ALMaSS uses different values for the landcover types, so this step simply translates
+# the numeric values.
     mosaik2 = ReclassByASCIIFile(mosaik1, reclasstable, "DATA")
     mosaik2.save(outPath + "Mosaik_rekl")
     nowTime = time.strftime('%X %x')
