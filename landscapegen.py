@@ -642,7 +642,8 @@ try:
       arcpy.Delete_management(outPath + "T1_vejnet")
       print "... deleting existing raster"
     rasterList = [Raster (outPath + "vejk110"), Raster (outPath + "stie112"), Raster (outPath + "spor115"), Raster (outPath + "hjsp150"), Raster (outPath + "vind155"),
-                   Raster (outPath + "jern120"), Raster (outPath + "vu30122"), Raster (outPath + "vu60125"), Raster (outPath + "vu90130"), Raster (outPath + "park114"), Raster(outPath + "landhav")]
+                   Raster (outPath + "jern120"), Raster (outPath + "vu30122"), Raster (outPath + "vu60125"), Raster (outPath + "vu90130"), Raster (outPath + "park114"),
+                    Raster(outPath + "landhav")]
     rasTemp = CellStatistics(rasterList, "MAXIMUM", "DATA")
        #  use next line if the road themes should be shrunk - remember to change 'vejnet' above to 'vejnet0'
        #  may result in 'stripes' or other artificial looking features: @todo: Hvad kan resultere i stripes?
@@ -654,7 +655,8 @@ try:
     if arcpy.Exists(outPath + "T2_bebyggelser"):
       arcpy.Delete_management(outPath + "T2_bebyggelser")
       print "... deleting existing raster"
-    rasterList = [Raster (outPath + "lavb205"), Raster (outPath + "hojb210"), Raster (outPath + "byke215"), Raster (outPath + "kirk225"), Raster (outPath + "bygn250"), Raster (outPath + "sprt230"), Raster (outPath + "indu220"), Raster (outPath + "landhav")]
+    rasterList = [Raster (outPath + "lavb205"), Raster (outPath + "hojb210"), Raster (outPath + "byke215"), Raster (outPath + "kirk225"), Raster (outPath + "bygn250"),
+     Raster (outPath + "sprt230"), Raster (outPath + "indu220"), Raster (outPath + "landhav")]
     rasTemp = CellStatistics(rasterList, "MAXIMUM", "DATA")
     rasTemp.save (outPath + "T2_bebyggelser")
 
@@ -682,7 +684,9 @@ try:
     if arcpy.Exists(outPath + "T3_natur"):
       arcpy.Delete_management(outPath + "T3_natur")
       print "... deleting existing raster"
-    rasterList = [Raster (outPath + "skrt105"), Raster (outPath + "skov310"), Raster (outPath + "krat315"), Raster (outPath + "sand320"), Raster (outPath + "hede325"), Raster (outPath + "vaad330"), Raster (outPath + "eng_355"), Raster (outPath + "hede360"), Raster (outPath + "mose365"), Raster (outPath + "over370"), Raster (outPath + "seng375"), Raster (outPath + "soe_380"), Raster (outPath + "landhav")]
+    rasterList = [Raster (outPath + "skrt105"), Raster (outPath + "skov310"), Raster (outPath + "krat315"), Raster (outPath + "sand320"), Raster (outPath + "hede325"), 
+    Raster (outPath + "vaad330"), Raster (outPath + "eng_355"), Raster (outPath + "hede360"), Raster (outPath + "mose365"), Raster (outPath + "over370"), Raster (outPath + "seng375"), 
+    Raster (outPath + "soe_380"), Raster (outPath + "landhav")]
     rasTemp = CellStatistics(rasterList, "MAXIMUM", "DATA")
     rasTemp.save (outPath + "T3_natur")
 
@@ -691,8 +695,8 @@ try:
     if arcpy.Exists(outPath + "T5_kultur"):
       arcpy.Delete_management(outPath + "T5_kultur")
       print "... deleting existing raster"
-    rasterList = [Raster (outPath + "dige620"), Raster (outPath + "fred625"), Raster (outPath + "rekr630"), Raster (outPath + "hegn635"), Raster (outPath + "trae640"), Raster (outPath + "trae641"),
-                    Raster (outPath + "raas650"), Raster (outPath + "landhav")]
+    rasterList = [Raster (outPath + "dige620"), Raster (outPath + "fred625"), Raster (outPath + "rekr630"), Raster (outPath + "hegn635"), Raster (outPath + "trae640"), 
+    Raster (outPath + "trae641"), Raster (outPath + "raas650"), Raster (outPath + "landhav")]
     rasTemp = CellStatistics(rasterList, "MAXIMUM", "DATA")
     rasTemp.save (outPath + "T5_kultur")
 
