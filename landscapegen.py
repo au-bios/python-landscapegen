@@ -37,12 +37,12 @@ print "... model settings read"
 default = 1  # 1 -> run process; 0 -> do not run process
 
 #MOSAIC
-vejnet_c = default      #create road theme
-bebyggelser_c = default #create built up theme
-natur_c = default       #create nature theme
-vaadnatur_c = default   #create wet nature theme
-ferskvand_c = default   #create fresh water theme
-kultur_c = default      #create culturral feature theme
+Road = default      #create road theme
+buildup = default #create built up theme
+nature = default       #create nature theme
+wetnature = default   #create wet nature theme
+freshwater = default   #create fresh water theme
+cultural = default      #create cultural feature theme
 mosaik_c = default      #assemble final mosaic
 
 #CONVERSION  - features to raster layers
@@ -636,7 +636,7 @@ try:
   
 # 2) Combine rasters to thematic maps 
 
-  if vejnet_c == 1:   #Assembles a transportation theme for roads and road verges
+  if Road == 1:   #Assembles a transportation theme for roads and road verges
     print "Processing road theme ..."
     if arcpy.Exists(outPath + "T1_vejnet"):
       arcpy.Delete_management(outPath + "T1_vejnet")
@@ -650,7 +650,7 @@ try:
        #  vejnet = Shrink(vejnet0, 1, 1)
     rasTemp.save (outPath + "T1_vejnet")
 
-  if bebyggelser_c == 1:   #Assembles a built up theme
+  if buildup == 1:   #Assembles a built up theme
     print "Processing built up theme..."
     if arcpy.Exists(outPath + "T2_bebyggelser"):
       arcpy.Delete_management(outPath + "T2_bebyggelser")
@@ -660,7 +660,7 @@ try:
     rasTemp = CellStatistics(rasterList, "MAXIMUM", "DATA")
     rasTemp.save (outPath + "T2_bebyggelser")
 
-  if vaadnatur_c == 1:   #Assembles a 'wet nature' theme
+  if wetnature == 1:   #Assembles a 'wet nature' theme
     print "Processing wet natural areas ..."
     if arcpy.Exists(outPath + "T3_vaadnatur"):
       arcpy.Delete_management(outPath + "T3_vaadnatur")
@@ -669,7 +669,7 @@ try:
     rasTemp = CellStatistics(rasterList, "MAXIMUM", "DATA")
     rasTemp.save (outPath + "T3_vaadnatur")
 
-  if ferskvand_c == 1:   #Assembles a fresh water theme
+  if freshwater == 1:   #Assembles a fresh water theme
     print "Processing streams and lakes ..."
     if arcpy.Exists(outPath + "T4_vand"):
       arcpy.Delete_management(outPath + "T4_vand")
@@ -679,7 +679,7 @@ try:
     rasTemp = CellStatistics(rasterList, "MAXIMUM", "DATA")
     rasTemp.save (outPath + "T4_vand")
 
-  if natur_c == 1:   #Assembles a natural areas theme
+  if nature == 1:   #Assembles a natural areas theme
     print "Processing natural areas ..."
     if arcpy.Exists(outPath + "T3_natur"):
       arcpy.Delete_management(outPath + "T3_natur")
@@ -690,7 +690,7 @@ try:
     rasTemp = CellStatistics(rasterList, "MAXIMUM", "DATA")
     rasTemp.save (outPath + "T3_natur")
 
-  if kultur_c == 1:   # Assembles a theme of cultural features
+  if cultural == 1:   # Assembles a theme o cultural features
     print "Processing hedgerows, dikes, trees, etc ..."
     if arcpy.Exists(outPath + "T5_kultur"):
       arcpy.Delete_management(outPath + "T5_kultur")
