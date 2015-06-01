@@ -34,7 +34,7 @@ print "... model settings read"
 
 # MODEL EXECUTION - controls which processes are executed
 
-default = 1  # 1 -> run process; 0 -> not run process
+default = 1  # 1 -> run process; 0 -> do not run process
 
 #MOSAIC
 vejnet_c = default      #create road theme
