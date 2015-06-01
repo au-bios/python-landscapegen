@@ -60,36 +60,36 @@ pylons_150 = default   #pylons
 windturbines_155 = default   #wind turbines
 builtuplow_205 = default   #built up areas low
 builtuphigh_210 = default   #built up areas high
-byke215_c = default   #city center
-indu220_c = default   #industrial areas
-kirk225_c = default   #cemeteries
-sprt230_c = default   #sports areas
-bygn250_c = default   #buildings
-skov310_c = default   #top10dk forest
-krat315_c = default   #top10dk shrub
-sand320_c = default   #top10dk sand flats
-hede325_c = default   #top10dk heath land
-vaad330_c = default   #top10dk wetland
-eng_355_c = default   #protected meadows
-hede360_c = default   #protected heath land
-mose365_c = default   #protected bog
-over370_c = default   #protected dry grassland
-seng375_c = default   #protected salt marshes
-soe_380_c = default   #protected lakes
-soer440_c = default   #lakes
-aaer435_c = default   #small streams (< 2.5 meter)
-aaer436_c = default   #medium streams (2.5 - 12 meter)
-aaer437_c = default   #large streams (> 12 meter)
-sorn420_c = default   #lake buffer
-mark1000_c = default  #fields
-dige620_c = default   #dikes
-fred625_c = default   #archeological sites
-rekr630_c = default   #recreational areas
-hegn635_c = default   #hedgerows
-trae640_c = default   #tree groups
-trae641_c = default   #individual trees
-raas650_c = default   #gravel pits
-ais1100_c = default   #ais landcover map
+citycenter_215 = default   #city center
+industry_220 = default   #industrial areas
+churchyard_225 = default   #Churchyards
+sportsfields_230 = default   #sports areas
+buildings_250 = default   #buildings
+forests_310 = default   #top10dk forest
+shrubs_315 = default   #top10dk shrub
+sand_320 = default   #top10dk sand flats
+heathland_325 = default   #top10dk heath land
+wetland_330 = default   #top10dk wetland
+meadowprotected_355 = default   #protected meadows
+heathlandprotected _360 = default   #protected heath land
+bog_365 = default   #protected bog
+drygrassland_370 = default   #protected dry grassland
+marshprotected_375 = default   #protected salt marshes
+lakesprotected_380 = default   #protected lakes
+lakes_440 = default   #lakes
+smallstreams435 = default   #small streams (< 2.5 meter)
+mediumstreams_436 = default   #medium streams (2.5 - 12 meter)
+largestreams_437 = default   #large streams (> 12 meter)
+lakebuffer420 = default   #lake buffer
+fields_1000 = default  #fields
+dikes_620 = default   #dikes
+archeological_625 = default   #archeological sites
+recreational_630 = default   #recreational areas
+hedgerows_635 = default   #hedgerows
+coppice_640 = default   #tree groups
+individualtrees_641 = default   #individual trees
+gravelpits_650 = default   #gravel pits
+ais_1100 = default   #ais landcover map
 
 #NB: these buffers are calculated automatically - mentioned here to keep track on codes
 #aarn425    #buffers small streams
@@ -247,7 +247,7 @@ try:
     arcpy.Delete_management(outPath + "tmpRaster")
 
 # 215 - city center - (byke205)
-  if byke215_c == 1:
+  if citycenter_215 == 1:
     print "Processing city center ..."
     if arcpy.Exists(outPath + "byke215"):
       arcpy.Delete_management(outPath + "byke215")
@@ -259,7 +259,7 @@ try:
     arcpy.Delete_management(outPath + "tmpRaster")
 
 # 220 - industry (indu220)
-  if indu220_c == 1:
+  if industry_220 == 1:
     print "Processing industrial areas ..."
     if arcpy.Exists(outPath + "indu220"):
       arcpy.Delete_management(outPath + "indu220")
@@ -270,9 +270,9 @@ try:
     rasTemp.save(outPath + "indu220")
     arcpy.Delete_management(outPath + "tmpRaster")
 
-# 225 - cemeteries (225)
-  if kirk225_c == 1:
-    print "Processing cemeteries ..."
+# 225 - churchyards (225)
+  if churchyard_225 == 1:
+    print "Processing churchyards ..."
     if arcpy.Exists(outPath + "kirk225"):
       arcpy.Delete_management(outPath + "kirk225")
       print "... deleting existing raster"
@@ -283,7 +283,7 @@ try:
     arcpy.Delete_management(outPath + "tmpRaster")
 
 # 230 - sports fields (230)
-  if sprt230_c == 1:
+  if sportsfields_230 == 1:
     print "Processing sports fields ..."
     if arcpy.Exists(outPath + "sprt230"):
       arcpy.Delete_management(outPath + "sprt230")
@@ -295,7 +295,7 @@ try:
     arcpy.Delete_management(outPath + "tmpRaster")
 
 # 250 - buildings (bygn250)
-  if bygn250_c == 1:
+  if buildings_250 == 1:
     print "Processing buildings ..."
     if arcpy.Exists(outPath + "bygn250"):
       arcpy.Delete_management(outPath + "bygn250")
@@ -307,7 +307,7 @@ try:
     arcpy.Delete_management(outPath + "tmpRaster")
 
 # 310 - forests (skov310)
-  if skov310_c == 1:
+  if forests_310 == 1:
     print "Processing forests ..."
     if arcpy.Exists(outPath + "skov310"):
       arcpy.Delete_management(outPath + "skov310")
@@ -319,7 +319,7 @@ try:
     arcpy.Delete_management(outPath + "tmpRaster")
 
 # 315 - shrubs  (krat315)
-  if krat315_c == 1:
+  if shrubs_315 == 1:
     print "Processing shrubs ..."
     if arcpy.Exists(outPath + "krat315"):
       arcpy.Delete_management(outPath + "krat315")
@@ -331,7 +331,7 @@ try:
     arcpy.Delete_management(outPath + "tmpRaster")
 
 # 320 - sand flat - mainly beaches (sand320)
-  if sand320_c == 1:
+  if sand_320 == 1:
     print "Processing sand flats ..."
     if arcpy.Exists(outPath + "sand320"):
       arcpy.Delete_management(outPath + "sand320")
@@ -343,7 +343,7 @@ try:
     arcpy.Delete_management(outPath + "tmpRaster")
 
 # 325 - heath land (hede325)
-  if hede325_c == 1:
+  if heathland_325 == 1:
     print "Processing heath land ..."
     if arcpy.Exists(outPath + "hede325"):
       arcpy.Delete_management(outPath + "hede325")
@@ -355,7 +355,7 @@ try:
     arcpy.Delete_management(outPath + "tmpRaster")
 
 # 330 - wetland (vaad330)
-  if vaad330_c == 1:
+  if wetland_330 == 1:
     print "Processing wetland ..."
     if arcpy.Exists(outPath + "vaad330"):
       arcpy.Delete_management(outPath + "vaad330")
@@ -367,7 +367,7 @@ try:
     arcpy.Delete_management(outPath + "tmpRaster")
 
 # 355 - protected meadows (eng_355)
-  if eng_355_c == 1:
+  if meadowprotected_355 == 1:
     print "Processing protected meadows ..."
     if arcpy.Exists(outPath + "eng_355"):
       arcpy.Delete_management(outPath + "eng_355")
@@ -381,7 +381,7 @@ try:
     rasTemp.save(outPath + "eng_355")
 
 # 360 - protected heath land (hede360)
-  if hede360_c == 1:
+  if heathlandprotected_360 == 1:
     print "Processing protected heath land ..."
     if arcpy.Exists(outPath + "hede360"):
       arcpy.Delete_management(outPath + "hede360")
@@ -395,7 +395,7 @@ try:
     rasTemp.save(outPath + "hede360")
 
 # 365 - protected swamp 3065 (mose365)
-  if mose365_c == 1:
+  if bog_365 == 1:
     print "Processing protected swamp ..."
     if arcpy.Exists(outPath + "mose365"):
       arcpy.Delete_management(outPath + "mose365")
@@ -409,7 +409,7 @@ try:
     rasTemp.save(outPath + "mose365")
 
 # 370 - protected dry grassland 3070 (over370)
-  if over370_c == 1:
+  if drygrassland_370 == 1:
     print "Processing protected dry grassland ..."
     if arcpy.Exists(outPath + "over370"):
       arcpy.Delete_management(outPath + "over370")
@@ -423,7 +423,7 @@ try:
     rasTemp.save(outPath + "over370")
 
 # 375 - protected marsh 3075 (seng375)
-  if seng375_c == 1:
+  if marshprotected_375 == 1:
     print "Processing protected marsh ..."
     if arcpy.Exists(outPath + "seng375"):
       arcpy.Delete_management(outPath + "seng375")
@@ -437,7 +437,7 @@ try:
     rasTemp.save(outPath + "seng375")
 
 # 380 - protected lakes 3080 (soe_380)
-  if soe_380_c == 1:
+  if lakesprotected_380 == 1:
     print "Processing protected lakes ..."
     if arcpy.Exists(outPath + "soe_380"):
       arcpy.Delete_management(outPath + "soe_380")
@@ -451,7 +451,7 @@ try:
     rasTemp.save(outPath + "soe_380")
 
 # 440 - lakes (soer440)
-  if soer440_c == 1:
+  if lakes_440 == 1:
     print "Processing lakes ..."
     if arcpy.Exists(outPath + "soer440"):
       arcpy.Delete_management(outPath + "soer440")
@@ -463,7 +463,7 @@ try:
     # arcpy.Delete_management(outPath + "tmpRaster")
 
 # 425/435 - Small streams (2.5-12) (vandloeb_brudt)+ buffer  OBS:  remember to use 'ukendte'
-  if aaer435_c == 1:
+  if smallstreams435 == 1:
     print "Processing small streams (0 - 2.5 meter)"
     if arcpy.Exists(outPath + "aaer435"):
       arcpy.Delete_management(outPath + "aaer435")
@@ -483,7 +483,7 @@ try:
     rasTemp.save(outPath + "aaer425")
 
 # 426/436 - medium streams (2.5-12) (vandloeb_brudt)+ buffer
-  if aaer436_c == 1:
+  if mediumstreams_436 == 1:
     print "Processing medium streams (2.5 - 12 meter)"
     if arcpy.Exists(outPath + "aaer436"):
       arcpy.Delete_management(outPath + "aaer436")
@@ -502,7 +502,7 @@ try:
     rasTemp.save(outPath + "aaer426")
 
 # 427/437 - large streams (> 12 meter) (vandloeb_brudt)+ buffer
-  if aaer437_c == 1:
+  if largestreams_437 == 1:
     print "Processing large streams (> 12 meter)"
     if arcpy.Exists(outPath + "aaer437"):
       arcpy.Delete_management(outPath + "aaer437")
@@ -521,7 +521,7 @@ try:
     rasTemp.save(outPath + "aaer427")
 
 # 420 - lake buffer zones (soer410)
-  if sorn420_c == 1:
+  if lakebuffer420 == 1:
     print "Processing lake buffer zones  ..."
     if arcpy.Exists(outPath + "sorn420"):
       arcpy.Delete_management(outPath + "sorn420")
@@ -531,7 +531,7 @@ try:
     rasTemp.save(outPath + "sorn420")
 
 # mark1000 plus - converts field polygons and assign each polygon a unique id
-  if mark1000_c == 1:
+  if fields_1000 == 1:
     print "Processing field polygons ..."
     if arcpy.Exists(outPath + "mark1000"):
       arcpy.Delete_management(outPath + "mark1000")
@@ -545,7 +545,7 @@ try:
    # arcpy.Delete_management(outPath + "tmpRaster")
 
 # 620 - dikes (dige620)
-  if dige620_c == 1:
+  if dikes_620 == 1:
     print "Processing dikes ..."
     if arcpy.Exists(outPath + "dige620"):
       arcpy.Delete_management(outPath + "dige620")
@@ -555,7 +555,7 @@ try:
     rasTemp.save(outPath + "dige620")
 
 # 625 - archeological sites (fred625)
-  if fred625_c == 1:
+  if archeological_625 == 1:
     print "Processing ancient cultural trails ..."
     if arcpy.Exists(outPath + "fred625"):
       arcpy.Delete_management(outPath + "trae640")
@@ -565,7 +565,7 @@ try:
     rasTemp.save(outPath + "fred625")
 
 # 630 - recreational areas (rekr630)
-  if rekr630_c == 1:
+  if recreational_630 == 1:
     print "Processing recreational areas ..."
     if arcpy.Exists(outPath + "rekr630"):
       arcpy.Delete_management(outPath + "rekr630")
@@ -577,7 +577,7 @@ try:
     arcpy.Delete_management(outPath + "tmpRaster")
 
 # 635 - hedgerows (hegn635)
-  if hegn635_c == 1:
+  if hedgerows_635 == 1:
     print "Processing hedgerows..."
     if arcpy.Exists(outPath + "hegn635"):
       arcpy.Delete_management(outPath + "hegn635")
@@ -586,8 +586,8 @@ try:
     rasTemp = Con(eucDistTemp < 2, 635, 1)
     rasTemp.save(outPath + "hegn635")
 
-# 640 - tree groups (trae640)
-  if trae640_c == 1:
+# 640 - coppice/tree groups (trae640)
+  if coppice_640 == 1:
     print "Processing tree groups ..."
     if arcpy.Exists(outPath + "trae640"):
       arcpy.Delete_management(outPath + "trae640")
@@ -597,7 +597,7 @@ try:
     rasTemp.save(outPath + "trae640")
 
 # 641 - individual trees (trae641)
-  if trae641_c == 1:
+  if individualtrees_641 == 1:
     print "Processing individual trees ..."
     if arcpy.Exists(outPath + "trae641"):
       arcpy.Delete_management(outPath + "trae641")
@@ -607,7 +607,7 @@ try:
     rasTemp.save(outPath + "trae641")
 
 # 650- gravel pits (raas650)
-  if raas650_c == 1:
+  if gravelpits_650 == 1:
     print "Processing gravel pits ..."
     if arcpy.Exists(outPath + "raas650"):
       arcpy.Delete_management(outPath + "raas650")
@@ -619,7 +619,7 @@ try:
     arcpy.Delete_management(outPath + "tmpRaster")
 
 # 1100- AIS map (ais1100)
-  if ais1100_c == 1:
+  if ais_1100 == 1:
     print "Processing AIS map ..."
     if arcpy.Exists(outPath + "ais1100"):
       arcpy.Delete_management(outPath + "ais1100")
