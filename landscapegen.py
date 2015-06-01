@@ -37,7 +37,7 @@ print "... model settings read"
 default = 1  # 1 -> run process; 0 -> do not run process
 
 #MOSAIC
-Road = default      #create road theme
+road = default      #create road theme
 buildup = default #create built up theme
 nature = default       #create nature theme
 wetnature = default   #create wet nature theme
@@ -46,20 +46,20 @@ cultural = default      #create cultural feature theme
 mosaik_c = default      #assemble final mosaic
 
 #CONVERSION  - features to raster layers
-landhav_c = default   #land_sea
-skrt105_c = default   #slopes along roads
-vejk110_c = default   #road verges
-stie112_c = default   #paths
-park114_c = default   #parking areas
-spor115_c = default   #unpaved roads and tracks
-jern120_c = default   #railways
-vu30122_c = default   #small roads (< 3 meter)
-vu60125_c = default   #medium sized roads (3-6 meter)
-vu90130_c = default   #large roads (> 6 meter)
-hjsp150_c = default   #pylons
-vind155_c = default   #wind turbines
-lavb205_c = default   #built up areas low
-hojb210_c = default   #built up areas high
+landsea = default   #land_sea
+slopes_105 = default   #slopes along roads
+roadsideverge_110 = default   #road verges
+paths_112 = default   #paths
+parks_114 = default   #parking areas
+dirtroads_115 = default   #unpaved roads and tracks
+railways_120 = default   #railways
+smallroads_122 = default   #small roads (< 3 meter)
+mediumroads_125 = default   #medium sized roads (3-6 meter)
+largeroads_130 = default   #large roads (> 6 meter)
+pylons_150 = default   #pylons
+windturbines_155 = default   #wind turbines
+builtuplow_205 = default   #built up areas low
+builtuphigh_210 = default   #built up areas high
 byke215_c = default   #city center
 indu220_c = default   #industrial areas
 kirk225_c = default   #cemeteries
@@ -105,7 +105,7 @@ try:
 # 1) CONVERSION - from feature layers to raster
 
 # 1 - land and sea (land_hav)
-  if landhav_c == 1:
+  if landsea == 1:
     print "Processing base map (land/sea) ..."
     if arcpy.Exists(outPath + "landhav"):
       arcpy.Delete_management(outPath + "landhav")
@@ -113,7 +113,7 @@ try:
     arcpy.PolygonToRaster_conversion("land_hav", "Land", outPath + "landhav", "CELL_CENTER", "NONE", "1")
 
 # 105 - slopes along larger roads (skrt105)
-  if skrt105_c == 1:
+  if slopes_105 == 1:
     print "Processing artificial slopes along larger roads ..."
     if arcpy.Exists(outPath + "skrt105"):
       arcpy.Delete_management(outPath + "skrt105")
@@ -123,7 +123,7 @@ try:
     rasTemp.save(outPath + "skrt105")
 
 # 110 - road verges (vejk110)
-  if vejk110_c == 1:
+  if roadsideverge_110 == 1:
     print "Processing road verges ..."
     if arcpy.Exists(outPath + "vejk110"):
       arcpy.Delete_management(outPath + "vejk110")
@@ -133,7 +133,7 @@ try:
     rasTemp.save(outPath + "vejk110")
 
 # 112 - paths (stie112)
-  if stie112_c == 1:
+  if paths_112 == 1:
     print "Processing paths  ..."
     if arcpy.Exists(outPath + "stie112"):
       arcpy.Delete_management(outPath + "stie112")
@@ -143,7 +143,7 @@ try:
     rasTemp.save(outPath + "stie112")
 
 # 114 - parking areas (park114)
-  if park114_c == 1:
+  if parks_114 == 1:
     print "Processing parking areas ..."
     if arcpy.Exists(outPath + "park114"):
       arcpy.Delete_management(outPath + "park114")
@@ -153,7 +153,7 @@ try:
     rasTemp.save(outPath + "park114")
 
 # 115 - dirt roads (spor115)
-  if spor115_c == 1:
+  if dirtroads_115 == 1:
     print "Processing dirt roads  ..."
     if arcpy.Exists(outPath + "spor115"):
       arcpy.Delete_management(outPath + "spor115")
@@ -163,7 +163,7 @@ try:
     rasTemp.save(outPath + "spor115")
 
 # 120 - railway tracks (jern120)
-  if jern120_c == 1:
+  if railways_120 == 1:
     print "Processing railway tracks ..."
     if arcpy.Exists(outPath + "jern120"):
       arcpy.Delete_management(outPath + "jern120")
@@ -173,7 +173,7 @@ try:
     rasTemp.save(outPath + "jern120")
 
  # 122 - Small roads (vu30122)
-  if vu30122_c == 1:
+  if smallroads_122 == 1:
     print "Processing small roads  ..."
     if arcpy.Exists(outPath + "vu30122"):
       arcpy.Delete_management(outPath + "vu30122")
@@ -183,7 +183,7 @@ try:
     rasTemp.save(outPath + "vu30122")
 
  # 125 - Intermediate sized roads (vu60125)
-  if vu60125_c == 1:
+  if mediumroads_125 == 1:
     print "Processing medium sized roads ..."
     if arcpy.Exists(outPath + "vu60125"):
       arcpy.Delete_management(outPath + "vu60125")
@@ -193,7 +193,7 @@ try:
     rasTemp.save(outPath + "vu60125")
 
  # 130 - Large roads (vu90130)
-  if vu90130_c == 1:
+  if largeroads_130 == 1:
     print "Processing large roads ..."
     if arcpy.Exists(outPath + "vu90130"):
       arcpy.Delete_management(outPath + "vu90130")
@@ -203,7 +203,7 @@ try:
     rasTemp.save(outPath + "vu90130")
 
 # 150 - pylons (hjsp150)
-  if hjsp150_c == 1:
+  if pylons_150 == 1:
     print "Processing pylons ..."
     if arcpy.Exists(outPath + "hjsp150"):
       arcpy.Delete_management(outPath + "hjsp150")
@@ -213,7 +213,7 @@ try:
     rasTemp.save(outPath + "hjsp150")
 
 # 155 - wind turbines (vind155)
-  if vind155_c == 1:
+  if windturbines_155 == 1:
     print "Processing wind turbines ..."
     if arcpy.Exists(outPath + "vind155"):
       arcpy.Delete_management(outPath + "vind155")
@@ -223,7 +223,7 @@ try:
     rasTemp.save(outPath + "vind155")
 
 # 205 - built area - low (lavb205)
-  if lavb205_c == 1:
+  if builtuplow_205 == 1:
     print "Processing built areas (low) ..."
     if arcpy.Exists(outPath + "lavb205"):
       arcpy.Delete_management(outPath + "lavb205")
@@ -235,7 +235,7 @@ try:
     arcpy.Delete_management(outPath + "tmpRaster")
 
 # 210 - built area - high (lavb210)
-  if hojb210_c == 1:
+  if builtuphigh_210 == 1:
     print "Processing built areas (high) ..."
     if arcpy.Exists(outPath + "hojb210"):
       arcpy.Delete_management(outPath + "hojb210")
