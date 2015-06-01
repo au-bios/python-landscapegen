@@ -71,16 +71,16 @@ sand_320 = default   #top10dk sand flats
 heathland_325 = default   #top10dk heath land
 wetland_330 = default   #top10dk wetland
 meadowprotected_355 = default   #protected meadows
-heathlandprotected _360 = default   #protected heath land
+heathlandprotected_360 = default   #protected heath land
 bog_365 = default   #protected bog
 drygrassland_370 = default   #protected dry grassland
 marshprotected_375 = default   #protected salt marshes
 lakesprotected_380 = default   #protected lakes
 lakes_440 = default   #lakes
-smallstreams435 = default   #small streams (< 2.5 meter)
+smallstreams_435 = default   #small streams (< 2.5 meter)
 mediumstreams_436 = default   #medium streams (2.5 - 12 meter)
 largestreams_437 = default   #large streams (> 12 meter)
-lakebuffer420 = default   #lake buffer
+lakebuffer_420 = default   #lake buffer
 fields_1000 = default  #fields
 dikes_620 = default   #dikes
 archeological_625 = default   #archeological sites
@@ -463,7 +463,7 @@ try:
     # arcpy.Delete_management(outPath + "tmpRaster")
 
 # 425/435 - Small streams (2.5-12) (vandloeb_brudt)+ buffer  OBS:  remember to use 'ukendte'
-  if smallstreams435 == 1:
+  if smallstreams_435 == 1:
     print "Processing small streams (0 - 2.5 meter)"
     if arcpy.Exists(outPath + "aaer435"):
       arcpy.Delete_management(outPath + "aaer435")
@@ -521,7 +521,7 @@ try:
     rasTemp.save(outPath + "aaer427")
 
 # 420 - lake buffer zones (soer410)
-  if lakebuffer420 == 1:
+  if lakebuffer_420 == 1:
     print "Processing lake buffer zones  ..."
     if arcpy.Exists(outPath + "sorn420"):
       arcpy.Delete_management(outPath + "sorn420")
