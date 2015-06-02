@@ -636,7 +636,7 @@ try:
   print " "
 #===== End Chunk: Conversion =====#
 
-#===== Chunk: Themes  =====#
+#===== Chunk: Themes =====#
 # Combine rasters to thematic maps 
 
   if Road == 1:   #Assembles a transportation theme for roads and road verges
@@ -733,29 +733,31 @@ try:
     buildings_250 = Raster(outPath + "bygn250")
 
     step1 = Con(field > 999, field, 1)                    # fields first
-    print "fields added to mosaic ..."
+    print "fields added to map ..."
     step2 = Con(T4va == 1, step1, T4va)                   # freshwater on top
-    print "fresh water added to mosaic ..."
+    print "fresh water added to map ..."
     step3 = Con(step2 == 1, T3na, step2)                  # natural areas on NOT (fields, water)
-    print "natural areas added to mosaic ..."
+    print "natural areas added to map ..."
     step4 = Con(step3 == 1, T2be, step3)                  # built up areas on NOT (fields, water, natural areas)
-    print "built up areas added to mosaic ..."
+    print "built up areas added to map ..."
     step4a = Con(T3ana == 1, step4, T3ana)                # wet natural areas on top
-    print "wet natural areas added to mosaic  ..."
+    print "wet natural areas added to map  ..."
     step5 = Con(T5ku == 1, step4a, T5ku)                  # cultural features on top
-    print "cultural landscape features added to mosaic ..."
+    print "cultural landscape features added to map ..."
     step6 = Con(T1ve == 1, step5, T1ve)                   # roads on top
-    print "roads added to mosaic ..."
+    print "roads added to map ..."
     step7 = Con(buildings_250 == 1, step6, buildings_250)                   # buildings on top
-    print "buildings added to mosaic ..."
+    print "buildings added to map ..."
     map01 = Con(landhav == 1, step7, 0)                # sea added
-    print "sea added to mosaic ..."
+    print "sea added to map ..."
     map1 = Con(map01 == 1, ais1100, map01) # Use the AIS layer if a cell was not filled by any of the layers above.
     map1.save (outPath + "MapRaw")
     nowTime = time.strftime('%X %x')
     print "Raw map assembled ..." + nowTime
     print "  "
+#===== End Chunk: Stack =====#
 
+#===== Chunk: Finalize =====#
 # Reclassify to ALMaSS raster values
 # ALMaSS uses different values for the landcover types, so this step simply translates
 # the numeric values.
@@ -777,6 +779,10 @@ try:
   endTime = time.strftime('%X %x')
   print ""
   print "Landscape generated: " + endTime
+
+#===== End Chunk: Finalize =====#
+
+
 
 except:
     tb = sys.exc_info()[2]

@@ -14,26 +14,20 @@ if(!require(ralmass))
 library(ralmass)
 library(data.table)
 
-maps = dir('o:/ST_LandskabsGenerering/outputs/kvadrater')
-maps = maps[-which(maps %in% c("alleKvadrater.gdb", "data", "FarmClassificationMaps", 'skabelon', 'karup'))]  # Leaving out Karup since it has already been patched by cjt.
+PathToMaps = 'o:/ST_LandskabsGenerering/outputs/kvadrater/'  # The attribute table(s) from NAME_almass. It needs to be exported from ArcGIS.
+maps = dir(PathToMaps)
 length(maps)
-PathToMaps = 'o:/ST_LandskabsGenerering/outputs/kvadrater/'  
-# PathToFile = 'o:/ST_LandskabsGenerering/outputs/kvadrater/kolding/'  # The attribute table from NAME_almass. It needs to be exported from ArcGIS.
-# LandscapeName = 'kolding'
+
 for (i in 1:length(maps)) 
 {
 	LandscapeName = maps[i]
 	FileName = paste(LandscapeName, 'Attr.txt', sep = '')
 	attr = fread(paste(PathToMaps, LandscapeName, '/', FileName, sep = ''))
 	cleanattr = CleanAttrTable(AttrTable = attr, Soiltype = TRUE)  # see ?CleanAttrTable for documentation
-# dim(cleanattr)
 	setkey(cleanattr, 'PolyType')
 	targetfarms = cleanattr[PolyType >= 10000]  # Get the fields
 	targetfarms[,Soiltype:=NULL]
 	cleanattr = cleanattr[PolyType < 10000]  # Get the rest
-# dim(cleanattr)
-# str(targetfarms)
-
 
 # ¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤ #
 #	    			The farm info  						   #
@@ -50,7 +44,7 @@ for (i in 1:length(maps))
 	farminfo[AlmassCode == '59',AlmassCode:='216']  # Translate to the new code
 	farminfo[AlmassCode == '71',AlmassCode:='214']  # Translate to the new code
 	farminfo[,AlmassCode:= as.numeric(farminfo$AlmassCode)]
-# unique(farminfo[, AlmassCode])  # Okay.
+# unique(farminfo[, AlmassCode])  # Check that these are valid ALMaSS codes only
 
 # ¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤ #
 #	    			The soil info  						   #
