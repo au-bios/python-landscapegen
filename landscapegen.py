@@ -5,7 +5,8 @@
 # Last large update: October 19, 2014
 # Note:  This version uses the new field polygon theme that covers all of Denmark
 
-# IMPORT SYSTEM MODULES
+#===== Chunk: Setup =====#
+# Import system modules
 import arcpy, traceback, sys, time, gc
 from arcpy import env
 from arcpy.sa import *
@@ -15,7 +16,7 @@ gc.enable
 print "Model landscape generator started: " + nowTime
 print "... system modules checked"
 
-# DATA - paths to data, output gdb, scratch folder and model landscape mask
+# Data - paths to data, output gdb, scratch folder and simulation landscape mask
 outPath = "O:/ST_LandskabsGenerering/outputs/kvadrater/haslev/haslev.gdb/"                    # saves maps here
 localSettings = "O:/ST_LandskabsGenerering/outputs/kvadrater/haslev/project.gdb/haslevmask"   # project folder with mask
 gisDB = "O:/ST_LandskabsGenerering/gis/dkgis.gdb"                                             # input features
@@ -23,7 +24,7 @@ scratchDB = "O:/ST_LandskabsGenerering/outputs/kvadrater/haslev/scratch"        
 asciiexp = "O:/ST_LandskabsGenerering/outputs/kvadrater/haslev/ASCII_haslev.txt"              # export in ascii (for ALMaSS)
 reclasstable = "O:/ST_LandskabsGenerering/outputs/kvadrater/haslev/reclass.txt"               # reclass ascii table
 
-# MODEL SETTINGS
+# Model settings
 arcpy.env.overwriteOutput = True
 arcpy.env.workspace = gisDB
 arcpy.env.scratchWorkspace = scratchDB
@@ -32,20 +33,19 @@ arcpy.env.mask = localSettings
 arcpy.env.cellSize = localSettings
 print "... model settings read"
 
-# MODEL EXECUTION - controls which processes are executed
-
+# Model execution - controls which processes to run:
 default = 1  # 1 -> run process; 0 -> do not run process
 
-#MOSAIC
+# Mosaic
 road = default      #create road theme
-buildup = default #create built up theme
+builtup = default #create built up theme
 nature = default       #create nature theme
 wetnature = default   #create wet nature theme
 freshwater = default   #create fresh water theme
 cultural = default      #create cultural feature theme
 mosaik_c = default      #assemble final mosaic
 
-#CONVERSION  - features to raster layers
+# Conversion  - features to raster layers
 landsea = default   #land_sea
 slopes_105 = default   #slopes along roads
 roadsideverge_110 = default   #road verges
@@ -97,12 +97,14 @@ ais_1100 = default   #ais landcover map
 #aarn427    #buffers large streams
 
 print " "
+#===== End chunk: setup =====#
 
 #####################################################################################################
 
 try:
 
-# 1) CONVERSION - from feature layers to raster
+#===== Chunk: Conversion =====#
+# from feature layers to raster
 
 # 1 - land and sea (land_hav)
   if landsea == 1:
@@ -632,8 +634,8 @@ try:
 
   rasTemp = ''
   print " "
-
-  
+#===== End Chunk: Conversion =====#
+#===== Chunk: Themes  
 # 2) Combine rasters to thematic maps 
 
   if Road == 1:   #Assembles a transportation theme for roads and road verges
@@ -650,7 +652,7 @@ try:
        #  vejnet = Shrink(vejnet0, 1, 1)
     rasTemp.save (outPath + "T1_vejnet")
 
-  if buildup == 1:   #Assembles a built up theme
+  if builtup == 1:   #Assembles a built up theme
     print "Processing built up theme..."
     if arcpy.Exists(outPath + "T2_bebyggelser"):
       arcpy.Delete_management(outPath + "T2_bebyggelser")
