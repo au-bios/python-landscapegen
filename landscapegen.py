@@ -660,6 +660,17 @@ try:
     rasTemp = CellStatistics(rasterList, "MAXIMUM", "DATA")
     rasTemp.save (outPath + "T2_building")
 
+  if nature == 1:   #Assembles a natural areas theme
+    print "Processing natural areas ..."
+    if arcpy.Exists(outPath + "T3_nature"):
+      arcpy.Delete_management(outPath + "T3_nature")
+      print "... deleting existing raster"
+    rasterList = [Raster (outPath + "skrt105"), Raster (outPath + "skov310"), Raster (outPath + "krat315"), Raster (outPath + "sand320"), Raster (outPath + "hede325"), 
+    Raster (outPath + "vaad330"), Raster (outPath + "eng_355"), Raster (outPath + "hede360"), Raster (outPath + "mose365"), Raster (outPath + "over370"), Raster (outPath + "seng375"), 
+    Raster (outPath + "soe_380"), Raster (outPath + "landhav")]
+    rasTemp = CellStatistics(rasterList, "MAXIMUM", "DATA")
+    rasTemp.save (outPath + "T3_nature")
+
   if wetnature == 1:   #Assembles a 'wet nature' theme
     print "Processing wet natural areas ..."
     if arcpy.Exists(outPath + "T3_wetnature"):
@@ -679,16 +690,6 @@ try:
     rasTemp = CellStatistics(rasterList, "MAXIMUM", "DATA")
     rasTemp.save (outPath + "T4_water")
 
-  if nature == 1:   #Assembles a natural areas theme
-    print "Processing natural areas ..."
-    if arcpy.Exists(outPath + "T3_nature"):
-      arcpy.Delete_management(outPath + "T3_nature")
-      print "... deleting existing raster"
-    rasterList = [Raster (outPath + "skrt105"), Raster (outPath + "skov310"), Raster (outPath + "krat315"), Raster (outPath + "sand320"), Raster (outPath + "hede325"), 
-    Raster (outPath + "vaad330"), Raster (outPath + "eng_355"), Raster (outPath + "hede360"), Raster (outPath + "mose365"), Raster (outPath + "over370"), Raster (outPath + "seng375"), 
-    Raster (outPath + "soe_380"), Raster (outPath + "landhav")]
-    rasTemp = CellStatistics(rasterList, "MAXIMUM", "DATA")
-    rasTemp.save (outPath + "T3_nature")
 
   if cultural == 1:   # Assembles a theme o cultural features
     print "Processing hedgerows, dikes, trees, etc ..."
