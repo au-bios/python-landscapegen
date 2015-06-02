@@ -43,7 +43,7 @@ nature = default       #create nature theme
 wetnature = default   #create wet nature theme
 freshwater = default   #create fresh water theme
 cultural = default      #create cultural feature theme
-mosaik_c = default      #assemble final mosaic
+finalmap = default      #assemble final map
 
 # Conversion  - features to raster layers
 landsea = default   #land_sea
@@ -635,103 +635,103 @@ try:
   rasTemp = ''
   print " "
 #===== End Chunk: Conversion =====#
-#===== Chunk: Themes  
-# 2) Combine rasters to thematic maps 
+
+#===== Chunk: Themes  =====#
+# Combine rasters to thematic maps 
 
   if Road == 1:   #Assembles a transportation theme for roads and road verges
     print "Processing road theme ..."
-    if arcpy.Exists(outPath + "T1_vejnet"):
-      arcpy.Delete_management(outPath + "T1_vejnet")
+    if arcpy.Exists(outPath + "T1_road"):
+      arcpy.Delete_management(outPath + "T1_road")
       print "... deleting existing raster"
     rasterList = [Raster (outPath + "vejk110"), Raster (outPath + "stie112"), Raster (outPath + "spor115"), Raster (outPath + "hjsp150"), Raster (outPath + "vind155"),
                    Raster (outPath + "jern120"), Raster (outPath + "vu30122"), Raster (outPath + "vu60125"), Raster (outPath + "vu90130"), Raster (outPath + "park114"),
                     Raster(outPath + "landhav")]
     rasTemp = CellStatistics(rasterList, "MAXIMUM", "DATA")
-       #  use next line if the road themes should be shrunk - remember to change 'vejnet' above to 'vejnet0'
-       #  may result in 'stripes' or other artificial looking features: @todo: Hvad kan resultere i stripes?
-       #  vejnet = Shrink(vejnet0, 1, 1)
-    rasTemp.save (outPath + "T1_vejnet")
+    rasTemp.save (outPath + "T1_road")
 
   if builtup == 1:   #Assembles a built up theme
     print "Processing built up theme..."
-    if arcpy.Exists(outPath + "T2_bebyggelser"):
-      arcpy.Delete_management(outPath + "T2_bebyggelser")
+    if arcpy.Exists(outPath + "T2_building"):
+      arcpy.Delete_management(outPath + "T2_building")
       print "... deleting existing raster"
     rasterList = [Raster (outPath + "lavb205"), Raster (outPath + "hojb210"), Raster (outPath + "byke215"), Raster (outPath + "kirk225"), Raster (outPath + "bygn250"),
      Raster (outPath + "sprt230"), Raster (outPath + "indu220"), Raster (outPath + "landhav")]
     rasTemp = CellStatistics(rasterList, "MAXIMUM", "DATA")
-    rasTemp.save (outPath + "T2_bebyggelser")
+    rasTemp.save (outPath + "T2_building")
 
   if wetnature == 1:   #Assembles a 'wet nature' theme
     print "Processing wet natural areas ..."
-    if arcpy.Exists(outPath + "T3_vaadnatur"):
-      arcpy.Delete_management(outPath + "T3_vaadnatur")
+    if arcpy.Exists(outPath + "T3_wetnature"):
+      arcpy.Delete_management(outPath + "T3_wetnature")
       print "... deleting existing raster"
     rasterList = [Raster (outPath + "mose365"), Raster (outPath + "soe_380"), Raster (outPath + "landhav")]
     rasTemp = CellStatistics(rasterList, "MAXIMUM", "DATA")
-    rasTemp.save (outPath + "T3_vaadnatur")
+    rasTemp.save (outPath + "T3_wetnature")
 
   if freshwater == 1:   #Assembles a fresh water theme
     print "Processing streams and lakes ..."
-    if arcpy.Exists(outPath + "T4_vand"):
-      arcpy.Delete_management(outPath + "T4_vand")
+    if arcpy.Exists(outPath + "T4_water"):
+      arcpy.Delete_management(outPath + "T4_water")
       print "... deleting existing raster"
     rasterList = [Raster (outPath + "soer440"), Raster (outPath + "aaer435"), Raster (outPath + "aaer436"), Raster (outPath + "aaer437"),
                     Raster (outPath + "sorn420"), Raster (outPath + "aaer425"), Raster (outPath + "aaer426"), Raster (outPath + "aaer427"), Raster (outPath + "landhav")]
     rasTemp = CellStatistics(rasterList, "MAXIMUM", "DATA")
-    rasTemp.save (outPath + "T4_vand")
+    rasTemp.save (outPath + "T4_water")
 
   if nature == 1:   #Assembles a natural areas theme
     print "Processing natural areas ..."
-    if arcpy.Exists(outPath + "T3_natur"):
-      arcpy.Delete_management(outPath + "T3_natur")
+    if arcpy.Exists(outPath + "T3_nature"):
+      arcpy.Delete_management(outPath + "T3_nature")
       print "... deleting existing raster"
     rasterList = [Raster (outPath + "skrt105"), Raster (outPath + "skov310"), Raster (outPath + "krat315"), Raster (outPath + "sand320"), Raster (outPath + "hede325"), 
     Raster (outPath + "vaad330"), Raster (outPath + "eng_355"), Raster (outPath + "hede360"), Raster (outPath + "mose365"), Raster (outPath + "over370"), Raster (outPath + "seng375"), 
     Raster (outPath + "soe_380"), Raster (outPath + "landhav")]
     rasTemp = CellStatistics(rasterList, "MAXIMUM", "DATA")
-    rasTemp.save (outPath + "T3_natur")
+    rasTemp.save (outPath + "T3_nature")
 
   if cultural == 1:   # Assembles a theme o cultural features
     print "Processing hedgerows, dikes, trees, etc ..."
-    if arcpy.Exists(outPath + "T5_kultur"):
-      arcpy.Delete_management(outPath + "T5_kultur")
+    if arcpy.Exists(outPath + "T5_culture"):
+      arcpy.Delete_management(outPath + "T5_culture")
       print "... deleting existing raster"
     rasterList = [Raster (outPath + "dige620"), Raster (outPath + "fred625"), Raster (outPath + "rekr630"), Raster (outPath + "hegn635"), Raster (outPath + "trae640"), 
     Raster (outPath + "trae641"), Raster (outPath + "raas650"), Raster (outPath + "landhav")]
     rasTemp = CellStatistics(rasterList, "MAXIMUM", "DATA")
-    rasTemp.save (outPath + "T5_kultur")
+    rasTemp.save (outPath + "T5_culture")
+#===== End Chunk: Themes =====#
 
-# Assemble the raw map
+#===== Chunk: Stack =====#
+# Assemble the final map
 # First delete any existing layers
-  if mosaik_c == 1:   
+  if finalmap == 1:   
     print "Processing mosaic for all themes ..."
-    if arcpy.Exists(outPath + "Mosaik_rekl"):
-      arcpy.Delete_management(outPath + "Mosaik_rekl")
+    if arcpy.Exists(outPath + "MapReclassified"):
+      arcpy.Delete_management(outPath + "MapReclassified")
       print "... deleting existing raster"
-    if arcpy.Exists(outPath + "Mosaik_raa"):
-      arcpy.Delete_management(outPath + "Mosaik_raa")
+    if arcpy.Exists(outPath + "MapRaw"):
+      arcpy.Delete_management(outPath + "MapRaw")
       print "... deleting existing raster"
-    if arcpy.Exists(outPath + "Mosaik_almass"):
-      arcpy.Delete_management(outPath + "Mosaik_almass")
+    if arcpy.Exists(outPath + "MapFinal"):
+      arcpy.Delete_management(outPath + "MapFinal")
       print "... deleting existing raster"
 
     print " "
 
- # 3) Stack the thematic maps 
- # The raw map is put together here.  Here the hierarchy of individual themes is determined
-    T1ve = Raster(outPath + "T1_vejnet")
-    T2be = Raster(outPath + "T2_bebyggelser")
-    T3na = Raster(outPath + "T3_natur")
-    T3ana = Raster(outPath + "T3_vaadnatur")
-    T4va = Raster(outPath + "T4_vand")
-    T5ku = Raster(outPath + "T5_kultur")
-    ais1100 = Raster(outPath + "ais1100")
-    mark = Raster(outPath + "mark1000")   # fields
-    landhav = Raster(outPath + "landhav")
-    bygn = Raster(outPath + "bygn250")
+ # Stack the thematic maps 
+ # Here the hierarchy of individual themes is determined
+    T1ve = Raster(outPath + "T1_road")
+    T2be = Raster(outPath + "T2_building")
+    T3na = Raster(outPath + "T3_nature")
+    T3ana = Raster(outPath + "T3_wetnature")
+    T4va = Raster(outPath + "T4_water")
+    T5ku = Raster(outPath + "T5_culture")
+    ais1100 = Raster(outPath + "ais_1100")
+    field = Raster(outPath + "fields_1000")   # fields
+    landsea = Raster(outPath + "landhav")
+    buildings_250 = Raster(outPath + "bygn250")
 
-    step1 = Con(mark > 999, mark, 1)                    # fields first
+    step1 = Con(field > 999, field, 1)                    # fields first
     print "fields added to mosaic ..."
     step2 = Con(T4va == 1, step1, T4va)                   # freshwater on top
     print "fresh water added to mosaic ..."
@@ -745,27 +745,27 @@ try:
     print "cultural landscape features added to mosaic ..."
     step6 = Con(T1ve == 1, step5, T1ve)                   # roads on top
     print "roads added to mosaic ..."
-    step7 = Con(bygn == 1, step6, bygn)                   # buildings on top
+    step7 = Con(buildings_250 == 1, step6, buildings_250)                   # buildings on top
     print "buildings added to mosaic ..."
-    mosaik01 = Con(landhav == 1, step7, 0)                # sea added
+    map01 = Con(landhav == 1, step7, 0)                # sea added
     print "sea added to mosaic ..."
-    mosaik1 = Con(mosaik01 == 1, ais1100, mosaik01) # Use the AIS layer if a cell was not filled by any of the layers above.
-    mosaik1.save (outPath + "Mosaik_raa")
+    map1 = Con(map01 == 1, ais1100, map01) # Use the AIS layer if a cell was not filled by any of the layers above.
+    map1.save (outPath + "MapRaw")
     nowTime = time.strftime('%X %x')
-    print "Raw mosaic assembled ..." + nowTime
+    print "Raw map assembled ..." + nowTime
     print "  "
 
 # Reclassify to ALMaSS raster values
 # ALMaSS uses different values for the landcover types, so this step simply translates
 # the numeric values.
-    mosaik2 = ReclassByASCIIFile(mosaik1, reclasstable, "DATA")
-    mosaik2.save(outPath + "Mosaik_rekl")
+    mosaik2 = ReclassByASCIIFile(map1, reclasstable, "DATA")
+    mosaik2.save(outPath + "MapReclassified")
     nowTime = time.strftime('%X %x')
     print "Reclassification done ..." + nowTime
 
 # regionalise map
     regionALM = RegionGroup(mosaik2,"EIGHT","WITHIN","ADD_LINK","")
-    regionALM.save(outPath + "Mosaik_almass")
+    regionALM.save(outPath + "MapFinal")
     nowTime = time.strftime('%X %x')
     print "Regionalisation done ..." + nowTime
 
