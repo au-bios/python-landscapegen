@@ -464,7 +464,7 @@ try:
     rasTemp.save(outPath + "soer440")
     # arcpy.Delete_management(outPath + "tmpRaster")
 
-# 425/435 - Small streams (2.5-12) (vandloeb_brudt)+ buffer  OBS:  remember to use 'ukendte'
+# 425/435 - Small streams (0-2.5) (vandloeb_brudt)+ buffer  OBS:  remember to use 'ukendte'
   if smallstreams_435 == 1:
     print "Processing small streams (0 - 2.5 meter)"
     if arcpy.Exists(outPath + "aaer435"):
