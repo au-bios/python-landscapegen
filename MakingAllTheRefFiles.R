@@ -18,7 +18,7 @@ PathToMaps = 'o:/ST_LandskabsGenerering/outputs/kvadrater/'  # The attribute tab
 maps = dir(PathToMaps)
 length(maps)
 
-for (i in 1:length(maps)) 
+for (i in seq_along(maps)) 
 {
 	LandscapeName = maps[i]
 	FileName = paste(LandscapeName, 'Attr.txt', sep = '')
